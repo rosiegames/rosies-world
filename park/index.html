@@ -307,6 +307,11 @@
   .dpadBtn:active { transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15); }
 
   /* ---------- Vet visit ---------- */
+  #vetTop { position:absolute; left:0; top:0; width:800px; height:520px; z-index:20;
+    display:none; pointer-events:none; }
+  #world.vet-mode #vetTop { display:block; }
+  #vetTop > * { pointer-events:auto; }
+  #world.vet-mode #rosie { pointer-events:none; }   /* she must never swallow a tap */
   #vetScene { position:absolute; left:0; top:0; width:800px; height:520px; display:none; z-index:1; }
   #world.vet-mode #vetScene { display:block; }
   #world.vet-mode .tile-wall, #world.vet-mode .floor, #world.vet-mode .window, #world.vet-mode #tubWrap { display:none; }
@@ -343,9 +348,19 @@
   .vspot .countNum { position:absolute; top:-30px; left:50%; transform:translateX(-50%);
     font-size:30px; font-weight:800; color:#2f7a63; pointer-events:none; }
   .vspot.listening { box-shadow:0 3px 10px rgba(0,0,0,.18), 0 0 0 6px rgba(232,120,140,.6); }
-  .beatRing { position:absolute; width:80px; height:80px; border-radius:50%; z-index:9; pointer-events:none;
+  .beatRing { pointer-events:none; position:absolute; width:80px; height:80px; border-radius:50%; z-index:9; pointer-events:none;
     border:5px solid rgba(232,120,140,.85); animation: beatpulse .8s ease-out forwards; }
   @keyframes beatpulse { 0%{transform:scale(.35); opacity:1} 100%{transform:scale(1.5); opacity:0} }
+  .swab { position:absolute; z-index:24; cursor:grab; touch-action:none;
+    filter: drop-shadow(0 4px 5px rgba(0,0,0,.22)); }
+  .swab.held { cursor:grabbing; transform:scale(1.08) rotate(-8deg); }
+  .swab.gliding { transition: left .4s ease, top .4s ease; }
+  .swab.wiping { animation: wipeit .45s ease 2; }
+  @keyframes wipeit { 0%,100%{ transform:rotate(-10deg) } 50%{ transform:rotate(14deg) } }
+  .swabHint { position:absolute; font-size:14px; font-weight:800; color:#3c5a50;
+    background:#fff; padding:3px 10px; border-radius:10px; pointer-events:none;
+    box-shadow:0 2px 5px rgba(0,0,0,.14); animation: bob 1.8s ease-in-out infinite; }
+  .vspot.earTarget.near { box-shadow:0 3px 10px rgba(0,0,0,.18), 0 0 0 7px rgba(255,212,77,.85); transform:scale(1.08); }
   .pawCard { position:absolute; left:118px; top:352px; width:270px; z-index:14;
     background:#fff; border-radius:20px; padding:12px 14px 16px; box-shadow:0 6px 16px rgba(0,0,0,.16); }
   .pawTitle { font-size:16px; font-weight:800; color:#3c5a50; margin-bottom:8px; }
@@ -494,6 +509,7 @@
     </div>
     <div id="rosie"></div>
     <div id="tool"></div>
+    <div id="vetTop"></div>
   </div>
 </div>
 
@@ -816,7 +832,8 @@ const LINES = [
   "Use the arrows! Walk Rosie to Oscar and Ollie!",
   "Don't step on poo or ducks. Watch out for the bike and the big dog!",
   "Ewww! Not on the poo!",
-  "Splash! The ducks say quack quack! Go around the pond!",
+  "Splash! Go around the pond!",
+  "Quack quack! Don't bump the ducks!",
   "Woah! That dog is too big! Wait for him to walk away!",
   "Ding ding! Watch out for the bike!",
   "You can do it! Go slowly and wait for a clear path.",
@@ -830,7 +847,8 @@ const LINES = [
   "Clip the nails. Only the white tip!",
   "Careful! That pink part hurts. Clip the white tip.",
   "All four nails done! Now let's clean her ears.",
-  "Clean her ears. Tap each ear twice!",
+  "Clean her ears. Drag the swab to each ear!",
+  "Good! Now the other ear.",
   "Both ears are clean!",
   "Feel Rosie's tummy. Press and hold each spot.",
   "Nice and soft!",
@@ -2079,7 +2097,7 @@ function vetSpot(x, y, emoji, label, cls){
   el.className = 'vspot vetItem ' + (cls || '');
   el.style.left = (x-34)+'px'; el.style.top = (y-34)+'px';
   el.innerHTML = `<span class="ico">${emoji}</span>` + (label ? `<span class="vlabel">${label}</span>` : '');
-  document.getElementById('vetScene').appendChild(el);
+  document.getElementById('vetTop').appendChild(el);
   return el;
 }
 function vetDone(el){
@@ -2142,7 +2160,7 @@ function vetStep2(){
   const card = document.createElement('div');
   card.className = 'pawCard vetItem';
   card.innerHTML = `<div class="pawTitle">🐾 Rosie's paw</div><div class="nails"></div>`;
-  document.getElementById('vetScene').appendChild(card);
+  document.getElementById('vetTop').appendChild(card);
   const nails = card.querySelector('.nails');
   let left = 4, warned = 0;
   for(let i = 0; i < 4; i++){
@@ -2179,32 +2197,103 @@ function vetStep2(){
     });
   }
 }
+function swabSVG(){
+  return `<svg viewBox="0 0 120 34" style="width:120px;height:34px;overflow:visible;">
+    <rect x="26" y="14" width="68" height="6" rx="3" fill="#e3d9c6"/>
+    <ellipse cx="20" cy="17" rx="19" ry="14" fill="#fffdf7" stroke="#e8dfcc" stroke-width="2"/>
+    <ellipse cx="100" cy="17" rx="19" ry="14" fill="#fffdf7" stroke="#e8dfcc" stroke-width="2"/>
+    <ellipse cx="15" cy="13" rx="7" ry="5" fill="#fff"/>
+  </svg>`;
+}
 function cleanEars(){
-  instruct("Clean her ears. Tap each ear twice!");
-  let taps = { L:0, R:0 };
-  [['L',322,236],['R',478,236]].forEach(([side,x,y])=>{
-    const el = vetSpot(x, y, '👂', 'Wipe');
-    el.addEventListener('pointerdown', ()=>{
-      if(el.classList.contains('done')) return;
-      taps[side]++;
-      sfx.pop();
-      floatEmoji(x, y-24, '🧼');
-      tool.textContent = '🥢';
-      tool.style.display = 'block';
-      tool.style.left = (x+18)+'px'; tool.style.top = (y-46)+'px';
-      if(taps[side] >= 2){
-        vetDone(el);
-        if(taps.L >= 2 && taps.R >= 2){
-          tool.style.display = 'none';
-          sfx.yay();
-          toast(300, 180, "Squeaky clean!");
-          say("Both ears are clean!");
-          stepDone();
-          setTimeout(vetStep3, 1500);
-        }
-      }
-    });
+  instruct("Clean her ears. Drag the swab to each ear!");
+  const top = document.getElementById('vetTop');
+  const ears = [
+    { side:'L', x:330, y:240, done:false },
+    { side:'R', x:470, y:240, done:false },
+  ];
+  ears.forEach(t=>{
+    t.el = vetSpot(t.x, t.y, '👂', 'Ear');
+    t.el.classList.add('earTarget');
+    t.el.addEventListener('pointerdown', ()=>flySwabTo(t));   // tapping the ear works too
   });
+  const swab = document.createElement('div');
+  swab.className = 'swab vetItem';
+  swab.innerHTML = swabSVG();
+  const HOME = { x:150, y:412 };
+  swab.style.left = HOME.x+'px'; swab.style.top = HOME.y+'px';
+  top.appendChild(swab);
+  const hint = document.createElement('div');
+  hint.className = 'swabHint vetItem';
+  hint.textContent = 'drag me';
+  hint.style.left = (HOME.x+8)+'px'; hint.style.top = (HOME.y+40)+'px';
+  top.appendChild(hint);
+
+  let drag = null;
+  swab.addEventListener('pointerdown', (ev)=>{
+    hint.style.display = 'none';
+    swab.classList.add('held');
+    swab.setPointerCapture(ev.pointerId);
+    const p = worldPoint(ev.clientX, ev.clientY);
+    drag = { dx: p.x - parseFloat(swab.style.left), dy: p.y - parseFloat(swab.style.top) };
+  });
+  swab.addEventListener('pointermove', (ev)=>{
+    if(!drag) return;
+    const p = worldPoint(ev.clientX, ev.clientY);
+    swab.style.left = (p.x - drag.dx)+'px';
+    swab.style.top = (p.y - drag.dy)+'px';
+    const c = swabTip();
+    ears.forEach(t=>t.el.classList.toggle('near', !t.done && Math.hypot(c.x-t.x, c.y-t.y) < 78));
+  });
+  swab.addEventListener('pointerup', ()=>{
+    if(!drag) return;
+    drag = null;
+    swab.classList.remove('held');
+    const c = swabTip();
+    const hit = ears.find(t=>!t.done && Math.hypot(c.x-t.x, c.y-t.y) < 78);
+    ears.forEach(t=>t.el.classList.remove('near'));
+    if(hit) wipe(hit); else goHome();
+  });
+  function swabTip(){
+    return { x: parseFloat(swab.style.left) + 20, y: parseFloat(swab.style.top) + 17 };
+  }
+  function goHome(){
+    swab.classList.add('gliding');
+    swab.style.left = HOME.x+'px'; swab.style.top = HOME.y+'px';
+    setTimeout(()=>swab.classList.remove('gliding'), 420);
+  }
+  function flySwabTo(t){
+    if(t.done || drag) return;
+    hint.style.display = 'none';
+    swab.classList.add('gliding');
+    swab.style.left = (t.x-20)+'px'; swab.style.top = (t.y-17)+'px';
+    setTimeout(()=>{ swab.classList.remove('gliding'); wipe(t); }, 420);
+  }
+  function wipe(t){
+    if(t.done) return;
+    t.done = true;
+    swab.classList.add('gliding','wiping');
+    swab.style.left = (t.x-20)+'px'; swab.style.top = (t.y-17)+'px';
+    sfx.pop();
+    floatEmoji(t.x, t.y-26, '🫧');
+    setTimeout(()=>{
+      swab.classList.remove('wiping');
+      vetDone(t.el);
+      const rest = ears.filter(e=>!e.done).length;
+      if(rest === 0){
+        swab.remove(); hint.remove();
+        sfx.yay();
+        toast(300, 180, "Squeaky clean!");
+        say("Both ears are clean!");
+        stepDone();
+        setTimeout(vetStep3, 1500);
+      } else {
+        toast(t.x-40, t.y-72, "One more ear!");
+        say("Good! Now the other ear.");
+        goHome();
+      }
+    }, 900);
+  }
 }
 /* ---- 3. feel the tummy ---- */
 function vetStep3(){
@@ -2265,7 +2354,7 @@ function vetStep4(){
       e.style.cssText = 'position:absolute;z-index:25;font-size:42px;pointer-events:none;transition:left .6s ease,top .6s ease,transform .6s;';
       e.textContent = t;
       e.style.left = '380px'; e.style.top = '470px';
-      document.getElementById('vetScene').appendChild(e);
+      document.getElementById('vetTop').appendChild(e);
       requestAnimationFrame(()=>{ e.style.left = '392px'; e.style.top = '238px'; e.style.transform = 'scale(.4)'; });
       setTimeout(()=>{
         e.remove();
@@ -2301,7 +2390,7 @@ function vetStep5(){
     </div>
     <div class="plunger" id="medPlunger">⬅︎ drag</div>
     <div class="needle"></div>`;
-  document.getElementById('vetScene').appendChild(ui);
+  document.getElementById('vetTop').appendChild(ui);
   const marks = ui.querySelector('#medMarks');
   for(let i = 1; i <= 10; i++){
     const m = document.createElement('div');
@@ -2446,7 +2535,7 @@ function playHeart(n, done){
     const ring = document.createElement('div');
     ring.className = 'beatRing vetItem';
     ring.style.left = '360px'; ring.style.top = '260px';
-    document.getElementById('vetScene').appendChild(ring);
+    document.getElementById('vetTop').appendChild(ring);
     setTimeout(()=>ring.remove(), 800);
     setTimeout(pulse, 900);
   };
