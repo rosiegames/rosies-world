@@ -302,7 +302,7 @@
   #rosie.mini.stepping { animation: hopstep .24s ease; }
   @keyframes hopstep { 50% { transform:translateY(-7px); } }
   body.lawn { background: linear-gradient(#93cf72,#7cbb5e); }
-  .dpadBtn { border:none; border-radius:20px; width:86px; height:76px; font-size:38px;
+  .dpadBtn { border:none; border-radius:22px; width:132px; height:94px; font-size:48px;
     background:#fff1bd; cursor:pointer; box-shadow:0 5px 0 rgba(0,0,0,.15); }
   .dpadBtn:active { transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15); }
 
@@ -2908,7 +2908,7 @@ function startKitchen(){
     active:true, items:[], caught:0, misses:0, streak:0,
     rosieX:430, moveDir:0, dragging:false, facing:1,
     throwT:0.6, gap:0.85, fall:2.35, rest:0.95, el:baby,
-    drinkT:0, boost:0, sipCool:0,
+    drinkT:0, boost:0, sipCool:0, targetX:null, steering:false,
   };
   rosie.classList.add('kmini');
   placeRosieK();
@@ -2930,11 +2930,24 @@ function buildKitControls(){
     const b = document.createElement('button');
     b.className = 'dpadBtn';
     b.textContent = e;
-    const go = (ev)=>{ ev.preventDefault(); if(kitState) kitState.moveDir = d; };
-    const stop = ()=>{ if(kitState && kitState.moveDir === d) kitState.moveDir = 0; };
+    let downAt = 0;
+    const go = (ev)=>{
+      ev.preventDefault();
+      if(!kitState) return;
+      try { b.setPointerCapture(ev.pointerId); } catch(e){}   // keep walking if the finger drifts off
+      downAt = performance.now();
+      kitState.moveDir = d;
+      kitState.targetX = null;
+    };
+    const stop = ()=>{
+      if(!kitState || kitState.moveDir !== d) return;
+      kitState.moveDir = 0;
+      if(performance.now() - downAt < 200){                    // a quick tap = one good stride
+        kitState.targetX = Math.max(30, Math.min(770, kitState.rosieX + KIT.rosieW/2 + d*135));
+      }
+    };
     b.addEventListener('pointerdown', go);
     b.addEventListener('pointerup', stop);
-    b.addEventListener('pointerleave', stop);
     b.addEventListener('pointercancel', stop);
     choiceRow.appendChild(b);
   });
@@ -3054,9 +3067,19 @@ function kitTick(dt){
   const bowl = document.getElementById('waterBowl');
   if(bowl) bowl.classList.toggle('ready', ks.sipCool <= 0 && ks.boost <= 0);
   if(ks.active){
-    if(ks.moveDir && !ks.dragging){
-      ks.rosieX += ks.moveDir * (ks.boost > 0 ? 610 : 430) * dt;
+    const speed = (ks.boost > 0 ? 720 : 520);
+    if(ks.moveDir){
+      ks.rosieX += ks.moveDir * speed * dt;
       ks.facing = ks.moveDir;
+      ks.targetX = null;                       // arrows take over from a tapped target
+    } else if(ks.targetX !== null){
+      const nose = ks.rosieX + KIT.rosieW/2;
+      const d = ks.targetX - nose;
+      if(Math.abs(d) < 10){ ks.targetX = null; }
+      else {
+        ks.rosieX += Math.sign(d) * Math.min(Math.abs(d), speed * dt);
+        ks.facing = Math.sign(d);
+      }
     }
     ks.rosieX = Math.max(20, Math.min(800 - KIT.rosieW - 20, ks.rosieX));
     placeRosieK();
@@ -3106,7 +3129,7 @@ function kitTick(dt){
     }
     item.el.style.left = (item.x - 22) + 'px';
     item.el.style.top = (item.y - 22) + 'px';
-    if(ks.active && Math.abs(item.x - mouth.x) < 64 && item.y > mouth.y - 46 && item.y > 300) eatFood(item);
+    if(ks.active && Math.abs(item.x - mouth.x) < 74 && item.y > mouth.y - 46 && item.y > 300) eatFood(item);
   }
 }
 
@@ -3212,6 +3235,12 @@ function gameTick(ts){
 requestAnimationFrame(gameTick);
 
 world.addEventListener('pointerdown', (ev)=>{
+  if(kitState && kitState.active){
+    const p = worldPoint(ev.clientX, ev.clientY);
+    kitState.targetX = p.x;
+    kitState.steering = true;
+    return;
+  }
   if(dryState && dryState.active){
     dryState.holding = true;
     const p = worldPoint(ev.clientX, ev.clientY);
@@ -3220,6 +3249,10 @@ world.addEventListener('pointerdown', (ev)=>{
   }
 });
 world.addEventListener('pointermove', (ev)=>{
+  if(kitState && kitState.active && kitState.steering){
+    kitState.targetX = worldPoint(ev.clientX, ev.clientY).x;
+    return;
+  }
   if(dryState && dryState.active && dryState.holding){
     const p = worldPoint(ev.clientX, ev.clientY);
     dryState.px = p.x; dryState.py = p.y;
@@ -3228,6 +3261,7 @@ world.addEventListener('pointermove', (ev)=>{
 });
 window.addEventListener('pointerup', ()=>{
   if(dryState) dryState.holding = false;
+  if(kitState) kitState.steering = false;
   condRelease();
 });
 window.addEventListener('pointercancel', ()=>{
