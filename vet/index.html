@@ -2741,7 +2741,7 @@ function finishVet(){
 /* ================= Kitchen: catch the baby's food ================= */
 let kitState = null;
 const FOODS = ['🍌','🍎','🥕','🧀','🍞','🍓','🥦','🍪','🥑','🍐'];
-const KIT = { floorY:430, rosieY:372, rosieW:120, trayX:228, trayY:318, goal:6 };
+const KIT = { floorY:430, rosieY:372, rosieW:120, trayX:228, trayY:318, goal:8 };
 function babySVG(){
   return `<svg viewBox="0 0 150 190" style="width:150px;height:190px;overflow:visible;">
     <rect x="14" y="120" width="12" height="66" rx="5" fill="#c08d5a" transform="rotate(9 20 150)"/>
@@ -2776,7 +2776,7 @@ function startKitchen(){
   kitState = {
     active:true, items:[], caught:0, misses:0, streak:0,
     rosieX:430, moveDir:0, dragging:false, facing:1,
-    throwT:1.2, gap:2.4, fall:1.0, rest:3.6, el:baby,
+    throwT:0.9, gap:1.5, fall:1.45, rest:2.2, el:baby,
   };
   rosie.classList.add('kmini');
   placeRosieK();
@@ -2860,7 +2860,7 @@ function eatFood(item){
     if(ks.caught === 1) say("Yum!");
   }
   // only speeds up after a good run, never after a miss
-  if(ks.streak >= 3 && ks.fall < 1.35){ ks.fall += 0.12; ks.rest = Math.max(2.6, ks.rest - 0.25); ks.streak = 0; }
+  if(ks.streak >= 3 && ks.fall < 2.05){ ks.fall += 0.15; ks.rest = Math.max(1.6, ks.rest - 0.2); ks.gap = Math.max(1.1, ks.gap - 0.12); ks.streak = 0; }
   if(ks.caught >= KIT.goal) kitchenWin();
 }
 function missFood(item){
@@ -2878,9 +2878,9 @@ function missFood(item){
   }
   // struggling? slow everything down and leave food on the floor much longer
   if(ks.misses >= 3){
-    ks.fall = Math.max(0.62, ks.fall - 0.16);
-    ks.rest = Math.min(6.5, ks.rest + 0.8);
-    ks.gap = Math.min(3.2, ks.gap + 0.2);
+    ks.fall = Math.max(0.7, ks.fall - 0.24);
+    ks.rest = Math.min(6.5, ks.rest + 0.9);
+    ks.gap = Math.min(3.0, ks.gap + 0.28);
     ks.misses = 0;
     toast(item.x - 40, item.y - 70, "Slowing down!");
   }
@@ -2901,13 +2901,13 @@ function kitTick(dt){
   const ks = kitState;
   if(ks.active){
     if(ks.moveDir && !ks.dragging){
-      ks.rosieX += ks.moveDir * 290 * dt;
+      ks.rosieX += ks.moveDir * 345 * dt;
       ks.facing = ks.moveDir;
     }
     ks.rosieX = Math.max(20, Math.min(800 - KIT.rosieW - 20, ks.rosieX));
     placeRosieK();
     ks.throwT -= dt;
-    if(ks.throwT <= 0 && ks.items.length < 2){
+    if(ks.throwT <= 0 && ks.items.length < 3){
       ks.throwT = ks.gap;
       throwFood();
     }
