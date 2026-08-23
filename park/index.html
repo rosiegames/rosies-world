@@ -554,10 +554,7 @@
   .kc-fridge .hl { top:114px; height:76px; }
   .kc-fridge .mag { position:absolute; right:14px; top:34px; font-size:18px; }
   .kc-fridge::after { content:""; position:absolute; left:0; right:0; top:98px; height:5px; background:#c3d0d5; }
-  .kit-mat { position:absolute; left:56px; top:454px; width:130px; height:44px; border-radius:22px;
-    background:#cf7f68; opacity:.75; box-shadow:0 3px 6px rgba(0,0,0,.14); }
-  .kit-bowl { position:absolute; left:84px; top:450px; font-size:38px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.22)); }
-  .kc-water { position:absolute; left:196px; top:456px; width:70px; height:40px; z-index:5;
+  .kc-water { position:absolute; left:120px; top:456px; width:70px; height:40px; z-index:5;
     border-radius:0 0 34px 34px / 0 0 26px 26px;
     background:linear-gradient(#dfe7ea,#aebcc2); box-shadow:0 4px 6px rgba(0,0,0,.20); }
   .kc-water .w { position:absolute; left:6px; right:6px; top:5px; height:15px; border-radius:50%;
@@ -778,8 +775,6 @@
 
       <div class="kc-fridge"><span class="hh"></span><span class="hl"></span><span class="mag">🧲</span></div>
 
-      <div class="kit-mat"></div>
-      <div class="kit-bowl">🥣</div>
       <div class="kc-water" id="waterBowl"><span class="w"></span></div>
 
       <div class="kit-warm"></div>
@@ -3057,7 +3052,7 @@ function kitchenWin(){
   say("You did it! Rosie caught all the food. What a clever dog!");
   setTimeout(()=>showWin('🍌🐶','Rosie ate all the food!','She caught every bit. Good catching!','🍼','Again!'), 1600);
 }
-const WATER = { x:231, y:476, r:62 };
+const WATER = { x:155, y:476, r:62 };
 function kitTick(dt){
   const ks = kitState;
   if(ks.boost > 0) ks.boost -= dt;
