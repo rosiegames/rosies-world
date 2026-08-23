@@ -422,6 +422,74 @@
     box-shadow:0 3px 0 #33689e; z-index:3; }
   .syringe .needle { width:44px; height:6px; background:#b6c3ca; border-radius:3px; }
 
+  /* ---------- Kitchen ---------- */
+  #kitScene { position:absolute; left:0; top:0; width:800px; height:520px; display:none; z-index:1; }
+  #world.kitchen-mode #kitScene { display:block; }
+  #world.kitchen-mode .tile-wall, #world.kitchen-mode .floor,
+  #world.kitchen-mode .window, #world.kitchen-mode #tubWrap { display:none; }
+  body.kitchenbg { background:linear-gradient(#f6ead6,#efe0c9); }
+  .kit-bg { position:absolute; left:-200px; right:-200px; top:-140px; bottom:-140px; }
+  .kit-wall { position:absolute; left:0; right:0; top:0; height:300px; background:linear-gradient(#fdf3e2,#f6e7cf); }
+  .kit-tiles { position:absolute; left:0; right:0; top:176px; height:126px;
+    background:#eaf3f1;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(150,180,175,.35) 0 2px, transparent 2px 40px),
+      repeating-linear-gradient(90deg, rgba(150,180,175,.35) 0 2px, transparent 2px 40px); }
+  .kit-floor { position:absolute; left:0; right:0; top:430px; bottom:0; background:#cdb692;
+    box-shadow: inset 0 7px 9px rgba(0,0,0,.16);
+    background-image:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 92px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 2px, transparent 2px 40px); }
+  .kit-uppers { position:absolute; left:24px; top:24px; width:352px; height:126px;
+    display:flex; gap:8px; }
+  .kit-uppers i { flex:1; border-radius:8px; background:linear-gradient(#fbf7ee,#e9dcc6);
+    box-shadow: inset 0 0 0 4px #ddcdb2, 0 4px 0 rgba(0,0,0,.07); position:relative; }
+  .kit-uppers i::after { content:""; position:absolute; right:9px; top:50%; width:8px; height:22px;
+    margin-top:-11px; border-radius:4px; background:#c0ab8a; }
+  .kit-window { position:absolute; left:470px; top:30px; width:230px; height:124px;
+    background:linear-gradient(#cfeeff,#eaf8ff); border-radius:8px;
+    box-shadow: inset 0 0 0 9px #fff, 0 4px 10px rgba(0,0,0,.09); display:flex; gap:9px; padding:9px; }
+  .kit-window .pane { flex:1; background:linear-gradient(150deg, rgba(255,255,255,.75), rgba(255,255,255,0) 60%); border-radius:4px; }
+  .kit-window .sill { position:absolute; left:-12px; right:-12px; bottom:-14px; height:14px;
+    background:#fff; border-radius:5px; box-shadow:0 3px 5px rgba(0,0,0,.10); }
+  .kit-counter { position:absolute; left:-40px; right:-40px; top:300px; height:24px;
+    background:linear-gradient(#f3ede1,#d9cdb6); border-radius:6px; box-shadow:0 5px 0 #c3b498; }
+  .kit-base { position:absolute; left:-40px; right:-40px; top:324px; height:106px; display:flex; gap:8px; padding:0 40px; }
+  .kit-base i { flex:1; border-radius:7px; background:linear-gradient(#f1e6d2,#e0d0b4);
+    box-shadow: inset 0 0 0 4px #d5c3a4; position:relative; }
+  .kit-base i::after { content:""; position:absolute; left:50%; top:12px; width:34px; height:7px;
+    margin-left:-17px; border-radius:4px; background:#c0ab8a; }
+  .kit-fridge { position:absolute; right:14px; top:150px; width:118px; height:280px; border-radius:12px;
+    background:linear-gradient(#f7f9fa,#dde5e9); box-shadow: inset 0 0 0 4px #cfd9de, 0 5px 0 #c3ced4; }
+  .kit-fridge .hh, .kit-fridge .hl { position:absolute; left:13px; width:8px; border-radius:4px; background:#b9c5cb; }
+  .kit-fridge .hh { top:26px; height:56px; }
+  .kit-fridge .hl { top:120px; height:82px; }
+  .kit-fridge::after { content:""; position:absolute; left:0; right:0; top:104px; height:5px; background:#cfd9de; }
+  .kit-kettle { position:absolute; left:392px; top:256px; font-size:44px; }
+  .kit-jar { position:absolute; left:452px; top:268px; font-size:32px; }
+  .kit-bowl { position:absolute; left:92px; top:452px; font-size:40px;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.16)); }
+  .kit-mat { position:absolute; left:66px; top:458px; width:120px; height:40px; border-radius:20px;
+    background:#e3b7a0; opacity:.55; }
+  .babyChair { position:absolute; left:120px; top:246px; z-index:6; }
+  .babyChair .babyBody { transform-origin:75px 60px; }
+  .babyChair.throwing .babyBody { animation: babythrow .5s ease; }
+  @keyframes babythrow { 0%,100%{ transform:rotate(0) } 40%{ transform:rotate(-7deg) } }
+  .babyChair.throwing .babyArm { animation: armthrow .5s ease; transform-origin:108px 56px; }
+  @keyframes armthrow { 0%,100%{ transform:rotate(-24deg) } 45%{ transform:rotate(38deg) } }
+  .foodBit { position:absolute; z-index:12; font-size:44px; pointer-events:none;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.18)); }
+  .foodBit.onfloor { animation: foodsit 1.1s ease-in-out infinite; }
+  @keyframes foodsit { 0%,100%{ transform:scale(1) } 50%{ transform:scale(.93) } }
+  .foodBit.eaten { animation: foodeat .38s ease forwards; }
+  @keyframes foodeat { to { transform:scale(.2) translateY(-14px); opacity:0; } }
+  .foodBit.gone { animation: foodgone .42s ease forwards; }
+  @keyframes foodgone { to { transform:scale(1.5); opacity:0; filter:blur(3px); } }
+  #rosie.kmini { width:120px; height:126px; z-index:14; transition:none; }
+  #rosie.kmini svg { width:100%; height:100%; }
+  #rosie.kmini .mascot { display:none; }
+  #rosie.kmini.face-left svg { transform:scaleX(-1); }
+
   /* ---------- Overlays (shop / grown-ups / win) ---------- */
   .overlay {
     position:fixed; inset:0; background:rgba(40,60,80,.45); z-index:100;
@@ -557,6 +625,24 @@
       <div class="vet-leg" style="left:196px;"></div>
       <div class="vet-leg" style="left:582px;"></div>
     </div>
+    <div id="kitScene">
+      <div class="kit-bg">
+        <div class="kit-wall"></div>
+        <div class="kit-tiles"></div>
+        <div class="kit-floor"></div>
+      </div>
+      <div class="kit-uppers">
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <div class="kit-window"><span class="pane"></span><span class="pane"></span><span class="sill"></span></div>
+      <div class="kit-counter"></div>
+      <div class="kit-base"><i></i><i></i><i></i></div>
+      <div class="kit-fridge"><span class="hh"></span><span class="hl"></span></div>
+      <div class="kit-kettle">🫖</div>
+      <div class="kit-jar">🧂</div>
+      <div class="kit-bowl">🥣</div>
+      <div class="kit-mat"></div>
+    </div>
     <div id="rosie"></div>
     <div id="tool"></div>
     <div id="vetTop"></div>
@@ -642,6 +728,7 @@
       <button class="choice c-blue" id="menuBath"><span class="big">🛁</span>Bath time</button>
       <button class="choice c-green" id="menuPark"><span class="big">🌳</span>Park friends</button>
       <button class="choice c-pink" id="menuVet"><span class="big">🩺</span>Vet visit</button>
+      <button class="choice c-yellow" id="menuKitchen"><span class="big">🍼</span>Baby's snacks</button>
     </div>
   </div>
 </div>
@@ -651,7 +738,7 @@
 
 /* ================= State & storage ================= */
 const SAVE_KEY = 'rosieBath.v1';
-const DEFAULTS = { baths:0, parks:0, vets:0 };
+const DEFAULTS = { baths:0, parks:0, vets:0, kitchen:0 };
 let S = load();
 
 function load(){
@@ -918,6 +1005,11 @@ const LINES = [
   "That's right!",
   "Let's listen again. Count carefully!",
   "Rosie sounds like a healthy dog!",
+  "Baby is dropping food! Catch it before it disappears.",
+  "Move Rosie under the food. Yum!",
+  "Yum!",
+  "Never mind! Here comes another one.",
+  "You did it! Rosie caught all the food. What a clever dog!",
 ];
 let voiceAudio = null;
 function playClip(dataUri){
@@ -1052,7 +1144,7 @@ function resetScene(){
   rosie.className = '';
   rosie.style.display = '';
   clearChoices();
-  document.querySelectorAll('.bubble,.knot,.dryzone,.cream,.sdrop,.parkItem,.vetItem,.toast-bubble,#dialCard,#condUI,#shampooBottle').forEach(e=>e.remove());
+  document.querySelectorAll('.bubble,.knot,.dryzone,.cream,.sdrop,.parkItem,.vetItem,.kitItem,.toast-bubble,#dialCard,#condUI,#shampooBottle').forEach(e=>e.remove());
   if(dialState){ clearInterval(dialState.timer); dialState = null; }
   if(dryState){ dryState.active = false; dryState = null; }
   condState = null;
@@ -1060,6 +1152,9 @@ function resetScene(){
   tool.style.display = 'none';
   world.classList.remove('park-mode');
   world.classList.remove('vet-mode');
+  world.classList.remove('kitchen-mode');
+  document.body.classList.remove('kitchenbg');
+  if(kitState){ kitState.active = false; kitState = null; }
   document.body.classList.remove('lawn');
   document.body.classList.remove('clinic');
   vetState = null;
@@ -2643,6 +2738,205 @@ function finishVet(){
   setTimeout(()=>showWin('🩺🐶','Rosie had her check-up!','Rosie sounds like a healthy dog!','🩺','Again!'), 1600);
 }
 
+/* ================= Kitchen: catch the baby's food ================= */
+let kitState = null;
+const FOODS = ['🍌','🍎','🥕','🧀','🍞','🍓','🥦','🍪','🥑','🍐'];
+const KIT = { floorY:430, rosieY:372, rosieW:120, trayX:228, trayY:318, goal:6 };
+function babySVG(){
+  return `<svg viewBox="0 0 150 190" style="width:150px;height:190px;overflow:visible;">
+    <rect x="14" y="120" width="12" height="66" rx="5" fill="#c08d5a" transform="rotate(9 20 150)"/>
+    <rect x="124" y="120" width="12" height="66" rx="5" fill="#c08d5a" transform="rotate(-9 130 150)"/>
+    <rect x="26" y="96" width="98" height="14" rx="6" fill="#a9764a"/>
+    <rect x="30" y="34" width="90" height="70" rx="14" fill="#d8a06a"/>
+    <rect x="38" y="44" width="74" height="52" rx="10" fill="#f0cfa8"/>
+    <g class="babyBody">
+      <ellipse cx="75" cy="70" rx="30" ry="26" fill="#8fd3e8"/>
+      <circle cx="75" cy="36" r="27" fill="#f6d9bd"/>
+      <path d="M56 20 q10 -12 20 -4 q8 -8 16 2" fill="none" stroke="#b8834f" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="65" cy="36" r="4" fill="#3a2a1a"/><circle cx="85" cy="36" r="4" fill="#3a2a1a"/>
+      <circle cx="57" cy="44" r="5" fill="#f3a9a0" opacity=".75"/>
+      <circle cx="93" cy="44" r="5" fill="#f3a9a0" opacity=".75"/>
+      <path d="M68 47 q7 7 14 0" fill="none" stroke="#a4634f" stroke-width="3" stroke-linecap="round"/>
+      <ellipse class="babyArm" cx="108" cy="70" rx="10" ry="17" fill="#f6d9bd" transform="rotate(-24 108 70)"/>
+      <ellipse cx="42" cy="72" rx="10" ry="17" fill="#f6d9bd" transform="rotate(20 42 72)"/>
+    </g>
+    <rect x="20" y="104" width="110" height="16" rx="8" fill="#c99560"/>
+  </svg>`;
+}
+function startKitchen(){
+  lastMode = 'kitchen';
+  resetScene();
+  world.classList.add('kitchen-mode');
+  document.body.classList.add('kitchenbg');
+  const scene = document.getElementById('kitScene');
+  const baby = document.createElement('div');
+  baby.className = 'babyChair kitItem';
+  baby.innerHTML = babySVG();
+  scene.appendChild(baby);
+  kitState = {
+    active:true, items:[], caught:0, misses:0, streak:0,
+    rosieX:430, moveDir:0, dragging:false, facing:1,
+    throwT:1.2, gap:2.4, fall:1.0, rest:3.6, el:baby,
+  };
+  rosie.classList.add('kmini');
+  placeRosieK();
+  buildKitControls();
+  instruct("Baby is dropping food! Catch it before it disappears.");
+  setTimeout(()=>{ if(kitState) say("Move Rosie under the food. Yum!"); }, 4200);
+}
+function placeRosieK(){
+  rosie.style.left = kitState.rosieX + 'px';
+  rosie.style.top = KIT.rosieY + 'px';
+  rosie.classList.toggle('face-left', kitState.facing < 0);
+}
+function rosieMouth(){
+  return { x: kitState.rosieX + KIT.rosieW/2, y: KIT.rosieY + 40 };
+}
+function buildKitControls(){
+  clearChoices();
+  [['⬅️',-1],['➡️',1]].forEach(([e,d])=>{
+    const b = document.createElement('button');
+    b.className = 'dpadBtn';
+    b.textContent = e;
+    const go = (ev)=>{ ev.preventDefault(); if(kitState) kitState.moveDir = d; };
+    const stop = ()=>{ if(kitState && kitState.moveDir === d) kitState.moveDir = 0; };
+    b.addEventListener('pointerdown', go);
+    b.addEventListener('pointerup', stop);
+    b.addEventListener('pointerleave', stop);
+    b.addEventListener('pointercancel', stop);
+    choiceRow.appendChild(b);
+  });
+}
+window.addEventListener('keydown', (e)=>{
+  if(!kitState || !kitState.active) return;
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); kitState.moveDir = -1; }
+  if(e.key === 'ArrowRight'){ e.preventDefault(); kitState.moveDir = 1; }
+});
+window.addEventListener('keyup', (e)=>{
+  if(!kitState) return;
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowRight') kitState.moveDir = 0;
+});
+function throwFood(){
+  const ks = kitState;
+  const emoji = FOODS[Math.floor(Math.random()*FOODS.length)];
+  const el = document.createElement('div');
+  el.className = 'foodBit kitItem';
+  el.textContent = emoji;
+  document.getElementById('kitScene').appendChild(el);
+  // land somewhere across the floor, never right under the chair
+  const landX = 260 + Math.random()*440;
+  const flight = 1.15 / ks.fall;
+  const g = 1500;
+  const x0 = KIT.trayX, y0 = KIT.trayY;
+  const item = {
+    el, x:x0, y:y0, emoji,
+    vx: (landX - x0)/flight,
+    vy: ((KIT.floorY + 40 - y0) - 0.5*g*flight*flight)/flight,
+    g, landed:false, life:ks.rest, eaten:false,
+  };
+  ks.items.push(item);
+  ks.el.classList.add('throwing');
+  setTimeout(()=>{ if(kitState) kitState.el.classList.remove('throwing'); }, 500);
+  tone(760, .09, 'sine', .09);
+  tone(980, .09, 'sine', .07, .09);
+}
+function eatFood(item){
+  const ks = kitState;
+  item.eaten = true;
+  item.el.classList.add('eaten');
+  const el = item.el;
+  setTimeout(()=>el.remove(), 380);
+  ks.items = ks.items.filter(i=>i !== item);
+  ks.caught++;
+  ks.streak++;
+  ks.misses = 0;
+  sfx.munch();
+  floatEmoji(item.x, item.y - 26, '💛');
+  rosie.classList.add('happy');
+  setTimeout(()=>rosie.classList.remove('happy'), 900);
+  const left = KIT.goal - ks.caught;
+  if(left > 0){
+    instrText.textContent = "Yum! " + ks.caught + " of " + KIT.goal;
+    if(ks.caught === 1) say("Yum!");
+  }
+  // only speeds up after a good run, never after a miss
+  if(ks.streak >= 3 && ks.fall < 1.35){ ks.fall += 0.12; ks.rest = Math.max(2.6, ks.rest - 0.25); ks.streak = 0; }
+  if(ks.caught >= KIT.goal) kitchenWin();
+}
+function missFood(item){
+  const ks = kitState;
+  ks.items = ks.items.filter(i=>i !== item);
+  const el = item.el;
+  el.classList.add('gone');
+  setTimeout(()=>el.remove(), 420);
+  ks.misses++;
+  ks.streak = 0;
+  floatEmoji(item.x, item.y - 20, '💨');
+  if(ks.misses === 2){
+    toast(item.x - 60, item.y - 70, "Here comes another!");
+    say("Never mind! Here comes another one.");
+  }
+  // struggling? slow everything down and leave food on the floor much longer
+  if(ks.misses >= 3){
+    ks.fall = Math.max(0.62, ks.fall - 0.16);
+    ks.rest = Math.min(6.5, ks.rest + 0.8);
+    ks.gap = Math.min(3.2, ks.gap + 0.2);
+    ks.misses = 0;
+    toast(item.x - 40, item.y - 70, "Slowing down!");
+  }
+}
+function kitchenWin(){
+  kitState.active = false;
+  kitState.moveDir = 0;
+  rosie.classList.add('sparkly','happy');
+  S.kitchen = (S.kitchen || 0) + 1; save();
+  confettiBurst();
+  sfx.yay();
+  clearChoices();
+  instrText.textContent = "Rosie ate all the food!";
+  say("You did it! Rosie caught all the food. What a clever dog!");
+  setTimeout(()=>showWin('🍌🐶','Rosie ate all the food!','She caught every bit. Good catching!','🍼','Again!'), 1600);
+}
+function kitTick(dt){
+  const ks = kitState;
+  if(ks.active){
+    if(ks.moveDir && !ks.dragging){
+      ks.rosieX += ks.moveDir * 290 * dt;
+      ks.facing = ks.moveDir;
+    }
+    ks.rosieX = Math.max(20, Math.min(800 - KIT.rosieW - 20, ks.rosieX));
+    placeRosieK();
+    ks.throwT -= dt;
+    if(ks.throwT <= 0 && ks.items.length < 2){
+      ks.throwT = ks.gap;
+      throwFood();
+    }
+  }
+  const mouth = rosieMouth();
+  for(const item of [...ks.items]){
+    if(!item.landed){
+      item.vy += item.g * dt;
+      item.x += item.vx * dt;
+      item.y += item.vy * dt;
+      if(item.y >= KIT.floorY + 40){
+        item.y = KIT.floorY + 40;
+        item.landed = true;
+        item.el.classList.add('onfloor');
+        tone(220, .08, 'sine', .1);
+      }
+    } else {
+      item.life -= dt;
+      const f = Math.max(0, item.life / ks.rest);
+      item.el.style.opacity = f < .35 ? (0.35 + f) : 1;
+      item.el.style.setProperty('--f', f);
+      if(item.life <= 0){ missFood(item); continue; }
+    }
+    item.el.style.left = (item.x - 22) + 'px';
+    item.el.style.top = (item.y - 22) + 'px';
+    if(ks.active && Math.abs(item.x - mouth.x) < 64 && item.y > mouth.y - 46 && item.y > 300) eatFood(item);
+  }
+}
+
 /* ================= Overlays ================= */
 function showOverlay(id){ document.getElementById(id).classList.add('show'); }
 function hideOverlay(id){ document.getElementById(id).classList.remove('show'); }
@@ -2652,7 +2946,8 @@ document.querySelectorAll('.closeX').forEach(b=>{
 
 document.getElementById('winAgain').addEventListener('click', ()=>{
   hideOverlay('winOverlay');
-  if(lastMode === 'park') startPark(); else if(lastMode === 'vet') startVet(); else startBath();
+  if(lastMode === 'park') startPark(); else if(lastMode === 'vet') startVet();
+  else if(lastMode === 'kitchen') startKitchen(); else startBath();
 });
 document.getElementById('winMenu').addEventListener('click', ()=>{
   hideOverlay('winOverlay'); showMenu();
@@ -2671,6 +2966,7 @@ function showMenu(){
 document.getElementById('menuBath').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startBath(); });
 document.getElementById('menuPark').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startPark(); });
 document.getElementById('menuVet').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startVet(); });
+document.getElementById('menuKitchen').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startKitchen(); });
 
 /* ---------- Grown-ups ---------- */
 let gateAnswer = 0;
@@ -2696,7 +2992,7 @@ document.getElementById('gateGo').addEventListener('click', ()=>{
   }
 });
 function renderGrown(){
-  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits';
+  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits, ' + (S.kitchen||0) + ' kitchen';
   renderVoiceList();
 }
 document.getElementById('makeBackup').addEventListener('click', ()=>{
@@ -2737,6 +3033,7 @@ function gameTick(ts){
   if(dryState && dryState.active) dryTick(dt);
   if(condState && condState.active && condState.holding) condTick(dt);
   if(parkState) parkTick(dt);
+  if(kitState) kitTick(dt);
   requestAnimationFrame(gameTick);
 }
 requestAnimationFrame(gameTick);
@@ -2778,6 +3075,7 @@ document.body.addEventListener('pointerdown', function once(){
   if(want === 'bath') startBath();
   else if(want === 'park') startPark();
   else if(want === 'vet') startVet();
+  else if(want === 'kitchen') startKitchen();
   else showMenu();
 })();
 </script>
