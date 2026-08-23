@@ -479,10 +479,6 @@
     box-shadow: inset 0 0 0 3px rgba(255,255,255,.30), inset 0 2px 6px rgba(0,0,0,.14); }
   .kc-upper i::after { content:""; position:absolute; right:9px; top:50%; margin-top:-14px;
     width:6px; height:28px; border-radius:3px; background:linear-gradient(#e8c88a,#c9a563); }
-  .kc-shelf { position:absolute; top:96px; width:168px; height:11px; border-radius:3px;
-    background:linear-gradient(#c08a56,#a3703f); box-shadow:0 4px 6px rgba(0,0,0,.20);
-    display:flex; align-items:flex-end; justify-content:space-around; }
-  .kc-shelf span { font-size:25px; margin-bottom:9px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
   .kc-frame { position:absolute; left:424px; top:96px; width:58px; height:52px; border-radius:4px;
     background:#fffdf6; box-shadow:0 3px 7px rgba(0,0,0,.18), inset 0 0 0 5px #c9a563;
     display:flex; align-items:center; justify-content:center; font-size:24px; }
@@ -542,12 +538,27 @@
   .kc-toaster { position:absolute; left:640px; top:266px; font-size:30px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.2)); }
   .kc-fridge { position:absolute; right:8px; top:148px; width:112px; height:274px; border-radius:9px;
     background:linear-gradient(#f6f9fa,#d3dde1); box-shadow: inset 0 0 0 4px #c3d0d5, 0 6px 10px rgba(0,0,0,.20); }
-  .kc-fridge .hh, .kc-fridge .hl { position:absolute; left:12px; width:8px; border-radius:4px;
+  .kc-fridge .inside { position:absolute; inset:6px; border-radius:6px;
+    background:linear-gradient(#fff8e6,#f3e3bd); box-shadow: inset 0 0 22px rgba(240,180,60,.55);
+    display:flex; flex-direction:column; align-items:center; justify-content:space-evenly; }
+  .kc-fridge .inside b { font-size:30px; cursor:pointer; line-height:1;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.20)); transition:transform .18s, opacity .18s;
+    padding:2px 8px; border-radius:10px; }
+  .kc-fridge.open .inside b { animation: shelfbob 1.6s ease-in-out infinite; }
+  @keyframes shelfbob { 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.12) } }
+  .kc-fridge .inside b.taken { opacity:0; transform:scale(.3); pointer-events:none; animation:none; }
+  .kc-fridge .inside b:active { transform:scale(.8); }
+  .kc-fridge .door { position:absolute; inset:0; border-radius:9px; z-index:2;
+    background:linear-gradient(#f6f9fa,#d3dde1); box-shadow: inset 0 0 0 4px #c3d0d5;
+    transform-origin:left center; transition: transform .45s ease; }
+  .kc-fridge.open .door { transform: perspective(620px) rotateY(-76deg); }
+  .kc-fridge.open { box-shadow: inset 0 0 0 4px #c3d0d5, 0 6px 10px rgba(0,0,0,.2), 0 0 26px rgba(255,205,110,.75); }
+  .kc-fridge .door .hh, .kc-fridge .door .hl { position:absolute; left:12px; width:8px; border-radius:4px;
     background:linear-gradient(#e8c88a,#c9a563); }
-  .kc-fridge .hh { top:24px; height:50px; }
-  .kc-fridge .hl { top:114px; height:76px; }
-  .kc-fridge .mag { position:absolute; right:14px; top:34px; font-size:18px; }
-  .kc-fridge::after { content:""; position:absolute; left:0; right:0; top:98px; height:5px; background:#c3d0d5; }
+  .kc-fridge .door .hh { top:24px; height:50px; }
+  .kc-fridge .door .hl { top:114px; height:76px; }
+  .kc-fridge .door .mag { position:absolute; right:14px; top:34px; font-size:18px; font-style:normal; }
+  .kc-fridge .door::after { content:""; position:absolute; left:0; right:0; top:98px; height:5px; background:#c3d0d5; }
   .kc-water { position:absolute; left:120px; top:456px; width:70px; height:40px; z-index:5;
     border-radius:0 0 34px 34px / 0 0 26px 26px;
     background:linear-gradient(#dfe7ea,#aebcc2); box-shadow:0 4px 6px rgba(0,0,0,.20); }
@@ -734,9 +745,6 @@
       <div class="kit-counter"><span class="edge"></span></div>
 
       <div class="kc-upper" style="left:18px; width:196px;"><i></i><i></i></div>
-      <div class="kc-shelf" style="left:232px;">
-        <span>🫙</span><span>🍯</span><span>☕</span><span>🥫</span>
-      </div>
       <div class="kc-frame">🐕</div>
       <div class="kc-rail"><span>🥄</span><span>🍴</span><span>🔪</span><span>🥣</span></div>
       <div class="kc-mixer">🧁</div>
@@ -766,7 +774,10 @@
       <div class="kc-kettle">🫖</div>
       <div class="kc-toaster">🍞</div>
 
-      <div class="kc-fridge"><span class="hh"></span><span class="hl"></span><span class="mag">🧲</span></div>
+      <div class="kc-fridge">
+        <span class="inside"></span>
+        <span class="door"><i class="hh"></i><i class="hl"></i><i class="mag">🧲</i></span>
+      </div>
 
       <div class="kc-water" id="waterBowl"><span class="w"></span></div>
 
@@ -858,7 +869,7 @@
       <button class="choice c-blue" id="menuBath"><span class="big">🛁</span>Bath time</button>
       <button class="choice c-green" id="menuPark"><span class="big">🌳</span>Park friends</button>
       <button class="choice c-pink" id="menuVet"><span class="big">🩺</span>Vet visit</button>
-      <button class="choice c-yellow" id="menuKitchen"><span class="big">🍼</span>Baby's snacks</button>
+      <button class="choice c-yellow" id="menuKitchen"><span class="big">🍼</span>Rosie eating time</button>
     </div>
   </div>
 </div>
@@ -1135,12 +1146,13 @@ const LINES = [
   "That's right!",
   "Let's listen again. Count carefully!",
   "Rosie sounds like a healthy dog!",
-  "Baby is dropping food! Catch it before it disappears.",
   "Move Rosie under the food. Yum!",
   "Yum!",
   "Never mind! Here comes another one.",
   "You did it! Rosie caught all the food. What a clever dog!",
   "Glug glug! Now Rosie is extra fast!",
+  "Catch the food! Open the fridge and tap a snack.",
+  "The fridge is open! Tap a food to get it out.",
 ];
 let voiceAudio = null;
 function playClip(dataUri){
@@ -2908,12 +2920,15 @@ function startKitchen(){
     active:true, items:[], caught:0, misses:0, streak:0,
     rosieX:430, moveDir:0, dragging:false, facing:1,
     throwT:0.6, gap:0.85, fall:2.35, rest:0.95, el:baby,
-    drinkT:0, boost:0, sipCool:0, targetX:null, steering:false,
+    drinkT:0, boost:0, sipCool:0, targetX:null, steering:false, fridgeCool:0, sawFridge:false,
   };
+  fillFridge();
+  const fridgeEl = scene.querySelector('.kc-fridge');
+  if(fridgeEl) fridgeEl.addEventListener('pointerdown', (ev)=>{ ev.stopPropagation(); toggleFridge(); });
   rosie.classList.add('kmini');
   placeRosieK();
   buildKitControls();
-  instruct("Baby is dropping food! Catch it before it disappears.");
+  instruct("Catch the food! Open the fridge and tap a snack.");
   setTimeout(()=>{ if(kitState) say("Move Rosie under the food. Yum!"); }, 4200);
 }
 function placeRosieK(){
@@ -3031,6 +3046,57 @@ function missFood(item){
     toast(item.x - 40, item.y - 70, "Slowing down!");
   }
 }
+function toggleFridge(){
+  const f = document.querySelector('.kc-fridge');
+  const ks = kitState;
+  if(!f || !ks || !ks.active) return;
+  if(f.classList.contains('open')){          // tap again to shut it
+    f.classList.remove('open');
+    tone(150, .12, 'sine', .09);
+    return;
+  }
+  f.classList.add('open');
+  tone(190, .16, 'sine', .10);
+  if(!ks.sawFridge){
+    ks.sawFridge = true;
+    say("The fridge is open! Tap a food to get it out.");
+  }
+}
+const FRIDGE_FOODS = ['🧀','🥚','🍉','🥕','🫐','🌽','🍗','🥛','🍅','🥬'];
+function fillFridge(){
+  const inside = document.querySelector('.kc-fridge .inside');
+  if(!inside) return;
+  inside.innerHTML = '';
+  for(let i = 0; i < 3; i++){
+    const b = document.createElement('b');
+    b.textContent = FRIDGE_FOODS[Math.floor(Math.random()*FRIDGE_FOODS.length)];
+    b.addEventListener('pointerdown', (ev)=>{
+      ev.stopPropagation();                       // taking food must not shut the door
+      const f = document.querySelector('.kc-fridge');
+      if(!f || !f.classList.contains('open') || b.classList.contains('taken')) return;
+      b.classList.add('taken');
+      rollFromFridge(b.textContent);
+      setTimeout(()=>{                            // the shelf restocks
+        if(!kitState) return;
+        b.textContent = FRIDGE_FOODS[Math.floor(Math.random()*FRIDGE_FOODS.length)];
+        b.classList.remove('taken');
+      }, 3200);
+    });
+    inside.appendChild(b);
+  }
+}
+function rollFromFridge(emoji){
+  const ks = kitState;
+  if(!ks || !ks.active || ks.items.length >= 7) return;
+  emoji = emoji || FRIDGE_FOODS[Math.floor(Math.random()*FRIDGE_FOODS.length)];
+  const el = document.createElement('div');
+  el.className = 'foodBit kitItem onfloor';
+  el.innerHTML = '<span>' + emoji + '</span>';
+  document.getElementById('kitScene').appendChild(el);
+  ks.items.push({ el, emoji, x:706, y:KIT.floorY + 40, vx:0, vy:0, g:1500,
+    landed:true, roll:-(360 + Math.random()*200), life:ks.rest * 2.3, eaten:false });
+  tone(520, .07, 'sine', .07);
+}
 function poof(x, y){
   const scene = document.getElementById('kitScene');
   for(let i = 0; i < 7; i++){
@@ -3063,6 +3129,7 @@ function kitTick(dt){
   const ks = kitState;
   if(ks.boost > 0) ks.boost -= dt;
   if(ks.sipCool > 0) ks.sipCool -= dt;
+  if(ks.fridgeCool > 0) ks.fridgeCool -= dt;
   rosie.classList.toggle('boosted', ks.boost > 0);
   const bowl = document.getElementById('waterBowl');
   if(bowl) bowl.classList.toggle('ready', ks.sipCool <= 0 && ks.boost <= 0);
@@ -3118,8 +3185,8 @@ function kitTick(dt){
     } else {
       if(item.roll){
         item.x = Math.max(46, Math.min(754, item.x + item.roll*dt));
-        item.roll *= 0.90;
-        if(Math.abs(item.roll) < 6) item.roll = 0;
+        item.roll *= Math.pow(0.25, dt);
+        if(Math.abs(item.roll) < 8) item.roll = 0;
       }
       item.life -= dt;
       const f = Math.max(0, item.life / ks.rest);
