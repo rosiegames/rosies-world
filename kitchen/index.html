@@ -2990,7 +2990,7 @@ function finishVet(){
 /* ================= Kitchen: catch the baby's food ================= */
 let kitState = null;
 const FOODS = ['🍌','🍎','🥕','🧀','🍞','🍓','🥦','🍪','🥑','🍐'];
-const KIT = { floorY:430, rosieY:372, rosieW:120, trayX:228, trayY:318, goal:12 };
+const KIT = { floorY:430, rosieY:372, rosieW:120, trayX:228, trayY:318, goal:18 };
 function babySVG(){
   return `<svg viewBox="0 0 150 190" style="width:150px;height:190px;overflow:visible;">
     <rect x="14" y="120" width="12" height="66" rx="5" fill="#c08d5a" transform="rotate(9 20 150)"/>
@@ -3026,7 +3026,7 @@ function startKitchen(){
     active:true, items:[], caught:0, misses:0, streak:0,
     rosieX:430, moveDir:0, dragging:false, facing:1,
     throwT:0.6, gap:0.85, fall:2.35, rest:0.95, el:baby,
-    drinkT:0, boost:0, sipCool:0, targetX:null, steering:false, sawFridge:false, saidEmpty:false,
+    drinkT:0, boost:0, sipCool:0, targetX:null, steering:false, sawFridge:false, saidEmpty:false, lastZone:-1,
   };
   fillFridge();
   const fridgeEl = scene.querySelector('.kc-fridge');
@@ -3089,9 +3089,16 @@ function throwFood(){
   el.className = 'foodBit kitItem';
   el.innerHTML = '<span>' + emoji + '</span>';
   document.getElementById('kitScene').appendChild(el);
-  // land somewhere across the floor, never right under the chair
-  const landX = 260 + Math.random()*440;
-  const flight = 1.15 / ks.fall;
+  // Zac lobs it all over the kitchen — four zones, never the same one twice running
+  const ZONES = [[80,230],[230,390],[390,560],[560,740]];
+  let z = Math.floor(Math.random()*ZONES.length);
+  if(z === ks.lastZone) z = (z + 1 + Math.floor(Math.random()*(ZONES.length-1))) % ZONES.length;
+  ks.lastZone = z;
+  const zone = ZONES[z];
+  const landX = zone[0] + Math.random()*(zone[1] - zone[0]);
+  // some are flat and quick, some are high lobs
+  const arc = 0.82 + Math.random()*0.62;
+  const flight = (1.15 * arc) / ks.fall;
   const g = 1500;
   const x0 = KIT.trayX, y0 = KIT.trayY;
   const item = {
