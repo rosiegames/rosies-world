@@ -626,6 +626,63 @@
   #rosie.kmini.face-left svg { transform:scaleX(-1); }
   #rosie.kmini.boosted { filter: drop-shadow(0 0 12px rgba(120,210,250,.95)); }
 
+  /* ---------- Ball: Rosie and Missy ---------- */
+  #ballScene { position:absolute; left:0; top:0; width:800px; height:520px; display:none; z-index:1; }
+  #world.ball-mode #ballScene { display:block; }
+  #world.ball-mode .tile-wall, #world.ball-mode .floor,
+  #world.ball-mode .window, #world.ball-mode #tubWrap { display:none; }
+  body.yardbg { background:linear-gradient(#a8ddf5,#cdeaa8); }
+  .yard-sky { position:absolute; left:-200px; right:-200px; top:-160px; height:460px;
+    background:linear-gradient(#8fd3f2,#cbeaf8); }
+  .yard-sun { position:absolute; right:110px; top:16px; font-size:52px; }
+  .yard-hedge { position:absolute; left:-200px; right:-200px; top:250px; height:56px;
+    background-color:#4f9c44;
+    background-image: radial-gradient(circle at 20px 12px, #62b355 18px, transparent 19px),
+                      radial-gradient(circle at 60px 8px, #5aa94d 20px, transparent 21px);
+    background-size: 80px 56px; }
+  .yard-fence { position:absolute; left:-200px; right:-200px; top:286px; height:34px;
+    background-color:#e6d7bd;
+    background-image: repeating-linear-gradient(90deg, #cbb894 0 5px, transparent 5px 46px),
+                      linear-gradient(#f2e6d0,#dccdb0);
+    box-shadow:0 3px 5px rgba(0,0,0,.14); }
+  .yard-grass { position:absolute; left:-200px; right:-200px; top:318px; bottom:-160px;
+    background-color:#7fc063;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 3px, transparent 3px 54px),
+                      linear-gradient(#8ecb6f,#6cae52); }
+  .yard-tree { position:absolute; top:186px; font-size:86px; filter:drop-shadow(0 6px 5px rgba(0,0,0,.16)); }
+  .yard-flower { position:absolute; top:430px; font-size:26px; }
+  .missyDog { position:absolute; width:118px; height:124px; z-index:8; }
+  .missyDog svg { width:100%; height:100%; }
+  .missyDog.face-left svg { transform:scaleX(-1); }
+  .missyDog .tongue { opacity:0; }
+  .missyDog.happy .tongue { opacity:1; }
+  .missyDog .dogTag, .dogTag { position:absolute; left:50%; top:-22px; transform:translateX(-50%);
+    background:#fff; color:#4a3a28; font-weight:800; font-size:15px; padding:2px 11px; border-radius:11px;
+    box-shadow:0 2px 5px rgba(0,0,0,.16); white-space:nowrap; }
+  .rosieTag { position:absolute; z-index:11; }
+  .theBall { position:absolute; width:40px; height:40px; z-index:12; transition:opacity .3s; }
+  .theBall .bInner { font-size:36px; animation: spinball .5s linear infinite; }
+  @keyframes spinball { to { transform:rotate(360deg); } }
+  .pitchMeter { position:absolute; z-index:16; }
+  .pitchMeter .track { position:relative; height:44px; border-radius:22px;
+    background:linear-gradient(#f6ecd8,#e2d2b4); box-shadow: inset 0 3px 6px rgba(0,0,0,.22), 0 3px 0 rgba(0,0,0,.12); }
+  .pitchMeter .green { position:absolute; top:4px; bottom:4px; border-radius:16px;
+    background:linear-gradient(#8fe07a,#5bc247); box-shadow: inset 0 0 0 3px rgba(255,255,255,.5); }
+  .pitchMeter .needle { position:absolute; top:-9px; bottom:-9px; width:10px; margin-left:-5px;
+    border-radius:5px; background:linear-gradient(#ff8a5b,#e2452a); box-shadow:0 2px 5px rgba(0,0,0,.3); }
+  .pitchMeter.locked .needle { background:linear-gradient(#8aa2b0,#5b7180); }
+  .pitchMeter .mLabel { text-align:center; margin-top:7px; font-size:17px; font-weight:800; color:#3f5a3a;
+    text-shadow:0 1px 0 rgba(255,255,255,.7); }
+  .throwBtn { border:none; border-radius:22px; padding:16px 40px; font-size:26px; font-weight:800;
+    color:#3f2f1c; background:#ffd44d; box-shadow:0 5px 0 #d9ac16; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:2px; font-family:inherit; }
+  .throwBtn .big { font-size:38px; line-height:1; }
+  .throwBtn:active:not(:disabled) { transform:translateY(3px); box-shadow:0 2px 0 #d9ac16; }
+  .throwBtn:disabled { opacity:.5; box-shadow:0 5px 0 #bdbdbd; background:#e6e6e6; }
+  #rosie.bmini { width:104px; height:110px; z-index:9; transition:none; }
+  #rosie.bmini svg { width:100%; height:100%; }
+  #rosie.bmini .mascot { display:none; }
+
   /* ---------- Overlays (shop / grown-ups / win) ---------- */
   .overlay {
     position:fixed; inset:0; background:rgba(40,60,80,.45); z-index:100;
@@ -810,6 +867,17 @@
       <div class="kit-warm"></div>
       <div class="kit-vig"></div>
     </div>
+    <div id="ballScene">
+      <div class="yard-sky"></div>
+      <div class="yard-sun">☀️</div>
+      <div class="yard-hedge"></div>
+      <div class="yard-fence"></div>
+      <div class="yard-grass"></div>
+      <div class="yard-tree" style="left:52px;">🌳</div>
+      <div class="yard-tree" style="left:690px;">🌳</div>
+      <div class="yard-flower" style="left:170px;">🌼</div>
+      <div class="yard-flower" style="left:600px;">🌷</div>
+    </div>
     <div id="rosie"></div>
     <div id="tool"></div>
     <div id="vetTop"></div>
@@ -896,6 +964,7 @@
       <button class="choice c-green" id="menuPark"><span class="big">🌳</span>Park friends</button>
       <button class="choice c-pink" id="menuVet"><span class="big">🩺</span>Vet visit</button>
       <button class="choice c-yellow" id="menuKitchen"><span class="big">🍼</span>Zac dropping food for Rosita</button>
+      <button class="choice c-purple" id="menuBall"><span class="big">🎾</span>Rosie and Missy</button>
     </div>
   </div>
 </div>
@@ -905,7 +974,7 @@
 
 /* ================= State & storage ================= */
 const SAVE_KEY = 'rosieBath.v1';
-const DEFAULTS = { baths:0, parks:0, vets:0, kitchen:0 };
+const DEFAULTS = { baths:0, parks:0, vets:0, kitchen:0, ball:0 };
 let S = load();
 
 function load(){
@@ -1180,6 +1249,12 @@ const LINES = [
   "Catch the food! Open the fridge and tap a snack.",
   "The fridge is open! Tap a food to get it out.",
   "The fridge is empty! Close the door and open it again for more.",
+  "Throw the ball to Rosie! Stop the arrow in the green.",
+  "Missy wants it too. Aim well!",
+  "Great throw! Rosie got the ball!",
+  "Missy got it! Have another go.",
+  "Throw it to Rosie! Stop the arrow in the green.",
+  "You did it! Rosie caught every ball. Missy had fun too!",
 ];
 let voiceAudio = null;
 function playClip(dataUri){
@@ -1314,7 +1389,7 @@ function resetScene(){
   rosie.className = '';
   rosie.style.display = '';
   clearChoices();
-  document.querySelectorAll('.bubble,.knot,.dryzone,.cream,.sdrop,.parkItem,.vetItem,.kitItem,.toast-bubble,#dialCard,#condUI,#shampooBottle').forEach(e=>e.remove());
+  document.querySelectorAll('.bubble,.knot,.dryzone,.cream,.sdrop,.parkItem,.vetItem,.kitItem,.ballItem,.toast-bubble,#dialCard,#condUI,#shampooBottle').forEach(e=>e.remove());
   if(dialState){ clearInterval(dialState.timer); dialState = null; }
   if(dryState){ dryState.active = false; dryState = null; }
   condState = null;
@@ -1323,6 +1398,9 @@ function resetScene(){
   world.classList.remove('park-mode');
   world.classList.remove('vet-mode');
   world.classList.remove('kitchen-mode');
+  world.classList.remove('ball-mode');
+  document.body.classList.remove('yardbg');
+  ballState = null;
   document.body.classList.remove('kitchenbg');
   if(kitState){ kitState.active = false; kitState = null; }
   document.body.classList.remove('lawn');
@@ -3250,6 +3328,231 @@ function kitTick(dt){
   }
 }
 
+/* ================= Ball: throw it to Rosie, not Missy ================= */
+let ballState = null;
+const BALL = { groundY:392, rosieW:104, missyW:118, goal:5, meterX:150, meterW:500, meterY:120 };
+function missySVG(){
+  const M = '#E8C589', D = '#C9A263', W = '#FFF6E4';
+  let fluff = '';
+  [[52,50],[72,36],[95,32],[118,36],[138,50],[145,72],[140,92],[50,92],[45,72]]
+    .forEach(p=>{ fluff += `<circle cx="${p[0]}" cy="${p[1]}" r="21" fill="${M}"/>`; });
+  let body = '';
+  [[58,150],[85,140],[115,140],[142,150],[152,166],[146,182],[54,182],[44,166]]
+    .forEach(p=>{ body += `<circle cx="${p[0]}" cy="${p[1]}" r="19" fill="${M}"/>`; });
+  return `<svg viewBox="0 0 190 200">
+    <g class="fur">
+      <g transform="translate(0,-12)">
+        ${body}
+        <ellipse cx="97" cy="164" rx="54" ry="35" fill="${M}"/>
+        <ellipse cx="97" cy="158" rx="40" ry="25" fill="${D}" opacity=".35"/>
+        <circle cx="86" cy="144" r="13" fill="${W}"/><circle cx="108" cy="144" r="13" fill="${W}"/>
+        <circle cx="97" cy="156" r="14" fill="${W}"/>
+        <rect x="62" y="178" width="17" height="21" rx="8" fill="${M}"/>
+        <rect x="112" y="178" width="17" height="21" rx="8" fill="${M}"/>
+        <path d="M150 154 q 24 -12 20 -34" fill="none" stroke="${M}" stroke-width="15" stroke-linecap="round"/>
+      </g>
+      <g>${fluff}</g>
+      <ellipse cx="95" cy="70" rx="47" ry="43" fill="${M}"/>
+      <ellipse cx="43" cy="84" rx="18" ry="37" fill="${D}" transform="rotate(12 43 84)"/>
+      <ellipse cx="147" cy="84" rx="18" ry="37" fill="${D}" transform="rotate(-12 147 84)"/>
+      <g class="eye"><circle cx="76" cy="63" r="8" fill="#3a2612"/><circle cx="79" cy="60" r="2.8" fill="#fff"/></g>
+      <g class="eye"><circle cx="114" cy="63" r="8" fill="#3a2612"/><circle cx="117" cy="60" r="2.8" fill="#fff"/></g>
+      <ellipse cx="95" cy="82" rx="10" ry="7.5" fill="#2b2118"/>
+      <path d="M95 89 q 0 6 -7 8 M95 89 q 0 6 7 8" fill="none" stroke="#4a3a28" stroke-width="3" stroke-linecap="round"/>
+      <ellipse class="tongue" cx="95" cy="102" rx="7" ry="9" fill="#f2889b"/>
+    </g>
+  </svg>`;
+}
+function startBall(){
+  lastMode = 'ball';
+  resetScene();
+  world.classList.add('ball-mode');
+  document.body.classList.add('yardbg');
+  const scene = document.getElementById('ballScene');
+  const missy = document.createElement('div');
+  missy.className = 'missyDog ballItem';
+  missy.innerHTML = missySVG() + '<div class="dogTag">Missy</div>';
+  scene.appendChild(missy);
+  const rTag = document.createElement('div');
+  rTag.className = 'dogTag rosieTag ballItem';
+  rTag.textContent = 'Rosie';
+  scene.appendChild(rTag);
+  const ball = document.createElement('div');
+  ball.className = 'theBall ballItem';
+  ball.innerHTML = '<div class="bInner">🎾</div>';
+  scene.appendChild(ball);
+  const meter = document.createElement('div');
+  meter.className = 'pitchMeter ballItem';
+  meter.innerHTML = `<div class="track"><div class="green"></div><div class="needle"></div></div>
+    <div class="mLabel">Stop it in the green!</div>`;
+  meter.style.left = BALL.meterX+'px'; meter.style.top = BALL.meterY+'px';
+  meter.style.width = BALL.meterW+'px';
+  scene.appendChild(meter);
+  ballState = {
+    phase:'aim', caught:0, misses:0, t:0,
+    needle:0.5, dir:1, speed:0.95, green:0.13,
+    rosieX:470, missyX:250, missyDir:1, missyRoam:52,
+    ball:{ el:ball, x:400, y:BALL.groundY, vx:0, vy:0, flying:false, landX:0 },
+    missy, meter, rTag, chaseT:0, winner:null,
+  };
+  rosie.classList.add('bmini');
+  layoutDogs();
+  buildThrowButton();
+  instruct("Throw the ball to Rosie! Stop the arrow in the green.");
+  setTimeout(()=>{ if(ballState) say("Missy wants it too. Aim well!"); }, 4200);
+}
+function layoutDogs(){
+  const bs = ballState;
+  rosie.style.left = (bs.rosieX - BALL.rosieW/2) + 'px';
+  rosie.style.top = (BALL.groundY - 108) + 'px';
+  bs.missy.style.left = (bs.missyX - BALL.missyW/2) + 'px';
+  bs.missy.style.top = (BALL.groundY - 118) + 'px';
+  bs.rTag.style.left = bs.rosieX + 'px';
+  bs.rTag.style.top = (BALL.groundY - 132) + 'px';
+  if(!bs.ball.flying){
+    bs.ball.el.style.left = (bs.ball.x - 20) + 'px';
+    bs.ball.el.style.top = (bs.ball.y - 20) + 'px';
+  }
+}
+function buildThrowButton(){
+  clearChoices();
+  const b = document.createElement('button');
+  b.className = 'throwBtn';
+  b.id = 'throwBtn';
+  b.innerHTML = '<span class="big">🎾</span>Throw!';
+  b.addEventListener('click', doThrow);
+  choiceRow.appendChild(b);
+}
+function doThrow(){
+  const bs = ballState;
+  if(!bs || bs.phase !== 'aim') return;
+  bs.phase = 'throw';
+  const btn = document.getElementById('throwBtn');
+  if(btn) btn.disabled = true;
+  bs.meter.classList.add('locked');
+  const err = (bs.needle - 0.5) * 2;                 // -1 .. 1
+  const landX = Math.max(90, Math.min(720, bs.rosieX + err * 300));
+  bs.ball.landX = landX;
+  bs.ball.flying = true;
+  bs.ball.x = 400; bs.ball.y = BALL.groundY + 60;
+  bs.ball.vx = (landX - 400) / 1.05;
+  bs.ball.vy = -430;
+  sfx.pop(); tone(680, .09, 'sine', .09);
+  if(Math.abs(err) < bs.green) toast(landX - 50, 250, "Nice aim!");
+}
+function ballTick(dt){
+  const bs = ballState;
+  // Missy never stops pestering
+  if(bs.phase === 'aim' || bs.phase === 'throw'){
+    bs.missyX += bs.missyDir * bs.missyRoam * dt;
+    if(bs.missyX > Math.min(700, bs.rosieX + 190)){ bs.missyDir = -1; }
+    if(bs.missyX < Math.max(100, bs.rosieX - 190)){ bs.missyDir = 1; }
+    bs.missy.classList.toggle('face-left', bs.missyDir < 0);
+  }
+  if(bs.phase === 'aim'){
+    bs.needle += bs.dir * bs.speed * dt;
+    if(bs.needle >= 1){ bs.needle = 1; bs.dir = -1; }
+    if(bs.needle <= 0){ bs.needle = 0; bs.dir = 1; }
+    const n = bs.meter.querySelector('.needle');
+    if(n) n.style.left = (bs.needle*100) + '%';
+    const g = bs.meter.querySelector('.green');
+    if(g){ g.style.left = ((0.5 - bs.green/2)*100) + '%'; g.style.width = (bs.green*100) + '%'; }
+  }
+  if(bs.phase === 'throw'){
+    const b = bs.ball;
+    b.vy += 1250 * dt;
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+    b.el.style.left = (b.x - 20) + 'px';
+    b.el.style.top = (b.y - 20) + 'px';
+    if(b.y >= BALL.groundY && b.vy > 0){
+      b.y = BALL.groundY; b.flying = false;
+      bs.phase = 'chase'; bs.chaseT = 0;
+      const dR = Math.abs(b.landX - bs.rosieX), dM = Math.abs(b.landX - bs.missyX);
+      bs.winner = (dR <= dM) ? 'rosie' : 'missy';
+      tone(240, .1, 'sine', .1);
+    }
+  }
+  if(bs.phase === 'chase'){
+    bs.chaseT += dt;
+    const b = bs.ball;
+    const target = b.landX;
+    const rSpeed = 300, mSpeed = 300;
+    if(bs.winner === 'rosie'){
+      bs.rosieX += Math.sign(target - bs.rosieX) * Math.min(Math.abs(target - bs.rosieX), rSpeed*dt);
+    } else {
+      bs.missyX += Math.sign(target - bs.missyX) * Math.min(Math.abs(target - bs.missyX), mSpeed*dt);
+    }
+    layoutDogs();
+    const chaser = bs.winner === 'rosie' ? bs.rosieX : bs.missyX;
+    if(Math.abs(chaser - target) < 6 || bs.chaseT > 2.6){ resolveThrow(); }
+    return;
+  }
+  layoutDogs();
+}
+function resolveThrow(){
+  const bs = ballState;
+  bs.phase = 'result';
+  const b = bs.ball;
+  b.el.style.opacity = 0;
+  if(bs.winner === 'rosie'){
+    bs.caught++;
+    bs.misses = 0;
+    sfx.yay();
+    rosie.classList.add('happy');
+    floatEmoji(bs.rosieX, BALL.groundY - 130, '💛');
+    toast(bs.rosieX - 60, BALL.groundY - 190, "Rosie got it!");
+    say("Great throw! Rosie got the ball!");
+    instrText.textContent = "Rosie got it! " + bs.caught + " of " + BALL.goal;
+    if(bs.caught >= BALL.goal){ setTimeout(ballWin, 1500); return; }
+  } else {
+    bs.misses++;
+    sfx.no();
+    bs.missy.classList.add('happy');
+    floatEmoji(bs.missyX, BALL.groundY - 140, '🐾');
+    toast(bs.missyX - 70, BALL.groundY - 200, "Missy got it!");
+    say("Missy got it! Have another go.");
+    instrText.textContent = "Missy got it! Try again.";
+    if(bs.misses >= 2){                    // ease off: slower sweep, bigger green
+      bs.speed = Math.max(0.5, bs.speed - 0.16);
+      bs.green = Math.min(0.34, bs.green + 0.06);
+      bs.missyRoam = Math.max(24, bs.missyRoam - 10);
+      bs.misses = 0;
+    }
+  }
+  setTimeout(nextThrow, 1900);
+}
+function nextThrow(){
+  const bs = ballState;
+  if(!bs) return;
+  rosie.classList.remove('happy');
+  bs.missy.classList.remove('happy');
+  bs.meter.classList.remove('locked');
+  bs.ball.el.style.opacity = 1;
+  bs.ball.x = 400; bs.ball.y = BALL.groundY; bs.ball.flying = false;
+  // new spots, always a fair gap between the dogs
+  bs.rosieX = 240 + Math.random()*400;
+  do { bs.missyX = 130 + Math.random()*560; } while(Math.abs(bs.missyX - bs.rosieX) < 150);
+  bs.missyDir = bs.missyX < bs.rosieX ? 1 : -1;
+  bs.needle = 0.5; bs.dir = Math.random() < .5 ? 1 : -1;
+  bs.phase = 'aim';
+  const btn = document.getElementById('throwBtn');
+  if(btn) btn.disabled = false;
+  instruct("Throw it to Rosie! Stop the arrow in the green.");
+  layoutDogs();
+}
+function ballWin(){
+  ballState.phase = 'done';
+  rosie.classList.add('sparkly','happy');
+  S.ball = (S.ball || 0) + 1; save();
+  confettiBurst();
+  sfx.yay();
+  clearChoices();
+  instrText.textContent = "Rosie caught them all!";
+  say("You did it! Rosie caught every ball. Missy had fun too!");
+  setTimeout(()=>showWin('🎾🐶','Rosie caught them all!','What a good throwing arm!','🎾','Play again!'), 1600);
+}
+
 /* ================= Overlays ================= */
 function showOverlay(id){ document.getElementById(id).classList.add('show'); }
 function hideOverlay(id){ document.getElementById(id).classList.remove('show'); }
@@ -3260,7 +3563,8 @@ document.querySelectorAll('.closeX').forEach(b=>{
 document.getElementById('winAgain').addEventListener('click', ()=>{
   hideOverlay('winOverlay');
   if(lastMode === 'park') startPark(); else if(lastMode === 'vet') startVet();
-  else if(lastMode === 'kitchen') startKitchen(); else startBath();
+  else if(lastMode === 'kitchen') startKitchen();
+  else if(lastMode === 'ball') startBall(); else startBath();
 });
 document.getElementById('winMenu').addEventListener('click', ()=>{
   hideOverlay('winOverlay'); showMenu();
@@ -3280,6 +3584,7 @@ document.getElementById('menuBath').addEventListener('click', ()=>{ hideOverlay(
 document.getElementById('menuPark').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startPark(); });
 document.getElementById('menuVet').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startVet(); });
 document.getElementById('menuKitchen').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startKitchen(); });
+document.getElementById('menuBall').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startBall(); });
 
 /* ---------- Grown-ups ---------- */
 let gateAnswer = 0;
@@ -3305,7 +3610,7 @@ document.getElementById('gateGo').addEventListener('click', ()=>{
   }
 });
 function renderGrown(){
-  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits, ' + (S.kitchen||0) + ' kitchen';
+  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits, ' + (S.kitchen||0) + ' kitchen, ' + (S.ball||0) + ' ball';
   renderVoiceList();
 }
 document.getElementById('makeBackup').addEventListener('click', ()=>{
@@ -3347,6 +3652,7 @@ function gameTick(ts){
   if(condState && condState.active && condState.holding) condTick(dt);
   if(parkState) parkTick(dt);
   if(kitState) kitTick(dt);
+  if(ballState && ballState.phase !== 'done') ballTick(dt);
   requestAnimationFrame(gameTick);
 }
 requestAnimationFrame(gameTick);
@@ -3400,6 +3706,7 @@ document.body.addEventListener('pointerdown', function once(){
   else if(want === 'park') startPark();
   else if(want === 'vet') startVet();
   else if(want === 'kitchen') startKitchen();
+  else if(want === 'ball') startBall();
   else showMenu();
 })();
 </script>
