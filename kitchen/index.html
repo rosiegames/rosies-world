@@ -651,7 +651,7 @@
                       linear-gradient(#8ecb6f,#6cae52); }
   .yard-tree { position:absolute; top:186px; font-size:86px; filter:drop-shadow(0 6px 5px rgba(0,0,0,.16)); }
   .yard-flower { position:absolute; top:430px; font-size:26px; }
-  .missyDog { position:absolute; width:118px; height:124px; z-index:8; }
+  .missyDog { position:absolute; width:142px; height:149px; z-index:8; }
   .missyDog svg { width:100%; height:100%; }
   .missyDog.face-left svg { transform:scaleX(-1); }
   .missyDog .tongue { opacity:0; }
@@ -1249,12 +1249,13 @@ const LINES = [
   "Catch the food! Open the fridge and tap a snack.",
   "The fridge is open! Tap a food to get it out.",
   "The fridge is empty! Close the door and open it again for more.",
-  "Throw the ball to Rosie! Stop the arrow in the green.",
   "Missy wants it too. Aim well!",
   "Great throw! Rosie got the ball!",
   "Missy got it! Have another go.",
-  "Throw it to Rosie! Stop the arrow in the green.",
-  "You did it! Rosie caught every ball. Missy had fun too!",
+  "Amazing! Rosie caught every single ball!",
+  "Great throwing! Rosie had so much fun with Missy!",
+  "Good throwing! Missy was quick today. Let's play again!",
+  "Missy was quick today! Both dogs had fun. Let's play again!",
 ];
 let voiceAudio = null;
 function playClip(dataUri){
@@ -3330,7 +3331,7 @@ function kitTick(dt){
 
 /* ================= Ball: throw it to Rosie, not Missy ================= */
 let ballState = null;
-const BALL = { groundY:392, rosieW:104, missyW:118, goal:5, meterX:150, meterW:500, meterY:120 };
+const BALL = { groundY:392, rosieW:104, missyW:142, rounds:5, meterX:150, meterW:500, meterY:120 };
 function missySVG(){
   const M = '#E8C589', D = '#C9A263', W = '#FFF6E4';
   let fluff = '';
@@ -3389,8 +3390,8 @@ function startBall(){
   meter.style.width = BALL.meterW+'px';
   scene.appendChild(meter);
   ballState = {
-    phase:'aim', caught:0, misses:0, t:0,
-    needle:0.5, dir:1, speed:0.95, green:0.13,
+    phase:'aim', caught:0, misses:0, t:0, round:1,
+    needle:0.5, dir:1, speed:0.85, green:0.16,
     rosieX:470, missyX:250, missyDir:1, missyRoam:52,
     ball:{ el:ball, x:400, y:BALL.groundY, vx:0, vy:0, flying:false, landX:0 },
     missy, meter, rTag, chaseT:0, winner:null,
@@ -3398,7 +3399,7 @@ function startBall(){
   rosie.classList.add('bmini');
   layoutDogs();
   buildThrowButton();
-  instruct("Throw the ball to Rosie! Stop the arrow in the green.");
+  instruct("Round 1 of 5. Throw the ball to Rosie!");
   setTimeout(()=>{ if(ballState) say("Missy wants it too. Aim well!"); }, 4200);
 }
 function layoutDogs(){
@@ -3406,7 +3407,7 @@ function layoutDogs(){
   rosie.style.left = (bs.rosieX - BALL.rosieW/2) + 'px';
   rosie.style.top = (BALL.groundY - 108) + 'px';
   bs.missy.style.left = (bs.missyX - BALL.missyW/2) + 'px';
-  bs.missy.style.top = (BALL.groundY - 118) + 'px';
+  bs.missy.style.top = (BALL.groundY - 143) + 'px';
   bs.rTag.style.left = bs.rosieX + 'px';
   bs.rTag.style.top = (BALL.groundY - 132) + 'px';
   if(!bs.ball.flying){
@@ -3431,14 +3432,18 @@ function doThrow(){
   if(btn) btn.disabled = true;
   bs.meter.classList.add('locked');
   const err = (bs.needle - 0.5) * 2;                 // -1 .. 1
-  const landX = Math.max(90, Math.min(720, bs.rosieX + err * 300));
+  const inGreen = Math.abs(bs.needle - 0.5) < bs.green/2;
+  bs.hitGreen = inGreen;
+  // stop in the green and it goes to Rosie; miss and Missy pounces on it
+  const landX = inGreen ? bs.rosieX
+                        : Math.max(90, Math.min(720, bs.missyX + (Math.random()*30 - 15)));
   bs.ball.landX = landX;
   bs.ball.flying = true;
   bs.ball.x = 400; bs.ball.y = BALL.groundY + 60;
   bs.ball.vx = (landX - 400) / 1.05;
   bs.ball.vy = -430;
   sfx.pop(); tone(680, .09, 'sine', .09);
-  if(Math.abs(err) < bs.green) toast(landX - 50, 250, "Nice aim!");
+  if(inGreen) toast(landX - 50, 250, "Nice aim!");
 }
 function ballTick(dt){
   const bs = ballState;
@@ -3468,8 +3473,7 @@ function ballTick(dt){
     if(b.y >= BALL.groundY && b.vy > 0){
       b.y = BALL.groundY; b.flying = false;
       bs.phase = 'chase'; bs.chaseT = 0;
-      const dR = Math.abs(b.landX - bs.rosieX), dM = Math.abs(b.landX - bs.missyX);
-      bs.winner = (dR <= dM) ? 'rosie' : 'missy';
+      bs.winner = bs.hitGreen ? 'rosie' : 'missy';
       tone(240, .1, 'sine', .1);
     }
   }
@@ -3503,8 +3507,7 @@ function resolveThrow(){
     floatEmoji(bs.rosieX, BALL.groundY - 130, '💛');
     toast(bs.rosieX - 60, BALL.groundY - 190, "Rosie got it!");
     say("Great throw! Rosie got the ball!");
-    instrText.textContent = "Rosie got it! " + bs.caught + " of " + BALL.goal;
-    if(bs.caught >= BALL.goal){ setTimeout(ballWin, 1500); return; }
+    instrText.textContent = "Rosie got it! " + bs.caught + " of " + bs.round;
   } else {
     bs.misses++;
     sfx.no();
@@ -3513,18 +3516,20 @@ function resolveThrow(){
     toast(bs.missyX - 70, BALL.groundY - 200, "Missy got it!");
     say("Missy got it! Have another go.");
     instrText.textContent = "Missy got it! Try again.";
-    if(bs.misses >= 2){                    // ease off: slower sweep, bigger green
-      bs.speed = Math.max(0.5, bs.speed - 0.16);
-      bs.green = Math.min(0.34, bs.green + 0.06);
+    if(bs.misses >= 2){                    // two in a row: widen the green, keep the pace
+      bs.green = Math.min(0.34, bs.green + 0.05);
       bs.missyRoam = Math.max(24, bs.missyRoam - 10);
       bs.misses = 0;
     }
   }
+  if(bs.round >= BALL.rounds){ setTimeout(ballWin, 1800); return; }
   setTimeout(nextThrow, 1900);
 }
 function nextThrow(){
   const bs = ballState;
   if(!bs) return;
+  bs.round++;
+  bs.speed += 0.28;                        // the slider gets quicker every round
   rosie.classList.remove('happy');
   bs.missy.classList.remove('happy');
   bs.meter.classList.remove('locked');
@@ -3538,19 +3543,39 @@ function nextThrow(){
   bs.phase = 'aim';
   const btn = document.getElementById('throwBtn');
   if(btn) btn.disabled = false;
-  instruct("Throw it to Rosie! Stop the arrow in the green.");
+  instruct("Round " + bs.round + " of " + BALL.rounds + ". Throw it to Rosie!");
   layoutDogs();
 }
 function ballWin(){
-  ballState.phase = 'done';
+  const bs = ballState;
+  bs.phase = 'done';
   rosie.classList.add('sparkly','happy');
   S.ball = (S.ball || 0) + 1; save();
   confettiBurst();
   sfx.yay();
   clearChoices();
-  instrText.textContent = "Rosie caught them all!";
-  say("You did it! Rosie caught every ball. Missy had fun too!");
-  setTimeout(()=>showWin('🎾🐶','Rosie caught them all!','What a good throwing arm!','🎾','Play again!'), 1600);
+  const n = bs.caught, all = n === BALL.rounds;
+  let title, sub, line;
+  if(all){
+    title = "Rosie caught every ball!";
+    sub = "Five out of five. Amazing throwing!";
+    line = "Amazing! Rosie caught every single ball!";
+  } else if(n >= 3){
+    title = "Rosie caught " + n + " of " + BALL.rounds + "!";
+    sub = "Great throwing. Missy had fun too!";
+    line = "Great throwing! Rosie had so much fun with Missy!";
+  } else if(n >= 1){
+    title = "Rosie caught " + n + "!";
+    sub = "Missy was quick today. Have another go!";
+    line = "Good throwing! Missy was quick today. Let's play again!";
+  } else {
+    title = "Missy was quick today!";
+    sub = "Both dogs had a great time. Try again!";
+    line = "Missy was quick today! Both dogs had fun. Let's play again!";
+  }
+  instrText.textContent = title;
+  say(line);
+  setTimeout(()=>showWin('🎾🐶', title, sub, '🎾','Play again!'), 1600);
 }
 
 /* ================= Overlays ================= */
