@@ -699,11 +699,11 @@
   .catchSpot { position:absolute; height:30px; border-radius:50%; z-index:2;
     background:rgba(255,255,255,.30); box-shadow: inset 0 0 0 5px rgba(255,255,255,.75); }
   .catchSpot.lit { background:rgba(255,236,120,.55); box-shadow: inset 0 0 0 5px #ffd44d; }
-  .toyLegend { position:absolute; left:50%; top:96px; transform:translateX(-50%); z-index:16;
-    display:flex; gap:14px; }
-  .toyLegend .lg { background:#fff; border-radius:18px; padding:6px 16px; font-size:30px; font-weight:800;
+  .toyLegend { position:absolute; left:50%; top:100px; transform:translateX(-50%); z-index:16;
+    display:flex; gap:10px; }
+  .toyLegend .lg { background:#fff; border-radius:14px; padding:3px 11px; font-size:22px; font-weight:800;
     color:#4a3a28; box-shadow:0 3px 0 rgba(0,0,0,.14); display:flex; align-items:center; gap:8px; white-space:nowrap; }
-  .toyLegend .lg small { font-size:19px; }
+  .toyLegend .lg small { font-size:15px; }
   .toyLegend .lg.on { background:#fff1bd; box-shadow:0 0 0 4px #ffd44d, 0 3px 0 rgba(0,0,0,.14); }
 
   /* ---------- Overlays (shop / grown-ups / win) ---------- */
@@ -3630,40 +3630,26 @@ const TOY = { groundY:392, spotX:400, rounds:10, basketY:402,
 // stuffed toys, drawn so they read as plush: chunky limbs, button eyes, stitches and a sewn-on patch
 function plushSVG(kind){
   if(kind === 'dog'){
-    // a sitting plush puppy like one off the pet-shop shelf: soft shading, fluffy edges, swing tag on the ear
-    const L = '#FFF4DE', O = 'stroke="#8a6238" stroke-width="1.1"';
-    const tuft = (pts, r, f) => pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="${r}" fill="${f}"/>`).join('');
+    // a round, smooth, brown sitting plush dog: two front legs, two back paws, no collar, no curls
+    const M = '#8B5A2B', D = '#5E3A1A', L = '#C99B68', O = 'stroke="#3d2511" stroke-width="1.4"';
     return `<svg viewBox="0 -8 60 70" width="56" height="56" style="overflow:visible">
-      <defs>
-        <radialGradient id="pdF" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#F6D69A"/><stop offset=".6" stop-color="#E2B36B"/><stop offset="1" stop-color="#C08E48"/></radialGradient>
-        <radialGradient id="pdE" cx="40%" cy="25%" r="85%"><stop offset="0" stop-color="#C58B4C"/><stop offset="1" stop-color="#8A5A2A"/></radialGradient>
-      </defs>
-      <ellipse cx="30" cy="60.5" rx="24" ry="3" fill="rgba(0,0,0,.16)"/>
-      <path d="M44 50 q13 -1 10 -14" fill="none" stroke="#8a6238" stroke-width="7" stroke-linecap="round"/>
-      <path d="M44 50 q13 -1 10 -14" fill="none" stroke="#E2B36B" stroke-width="5" stroke-linecap="round"/>
-      ${tuft([[13,44],[12,50],[16,36],[21,30],[39,30],[44,36],[47,44],[48,50]], 4.2, '#D9A85F')}
-      <path d="M30 26 C16 28 11 44 13 56 L47 56 C49 44 44 28 30 26 Z" fill="url(#pdF)"/>
-      <ellipse cx="30" cy="44" rx="8.5" ry="10.5" fill="${L}"/>
-      ${tuft([[24,37],[36,37],[22.5,44],[37.5,44],[24,51],[36,51]], 2.6, L)}
-      <ellipse cx="14" cy="53" rx="8" ry="6.5" fill="url(#pdF)" ${O}/><ellipse cx="46" cy="53" rx="8" ry="6.5" fill="url(#pdF)" ${O}/>
-      <ellipse cx="10" cy="57" rx="6" ry="3.6" fill="${L}" ${O}/><ellipse cx="50" cy="57" rx="6" ry="3.6" fill="${L}" ${O}/>
-      <rect x="23.5" y="40" width="6" height="17" rx="3" fill="url(#pdF)" ${O}/><rect x="30.5" y="40" width="6" height="17" rx="3" fill="url(#pdF)" ${O}/>
-      <ellipse cx="26.5" cy="57.5" rx="4.2" ry="2.8" fill="${L}" ${O}/><ellipse cx="33.5" cy="57.5" rx="4.2" ry="2.8" fill="${L}" ${O}/>
-      <path d="M21.5 30 q8.5 4 17 0 l0 4 q-8.5 4 -17 0 Z" fill="#E8504A" stroke="#a8322d" stroke-width=".9"/>
-      <path d="M27 33.5 l-3 6 l3.4 -1 l1.2 3 l2 -7 Z" fill="#E8504A" stroke="#a8322d" stroke-width=".9" stroke-linejoin="round"/>
-      <ellipse cx="13.5" cy="18" rx="6.2" ry="13" fill="url(#pdE)" ${O} transform="rotate(12 13.5 18)"/>
-      <ellipse cx="46.5" cy="18" rx="6.2" ry="13" fill="url(#pdE)" ${O} transform="rotate(-12 46.5 18)"/>
-      ${tuft([[18,6],[24,2.5],[30,1.5],[36,2.5],[42,6],[16.5,22],[43.5,22]], 4, '#E6BB76')}
-      <circle cx="30" cy="15" r="14" fill="url(#pdF)"/>
+      <defs><radialGradient id="pdF" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#A9743D"/><stop offset=".65" stop-color="${M}"/><stop offset="1" stop-color="#6E4520"/></radialGradient></defs>
+      <ellipse cx="30" cy="60.5" rx="23" ry="3" fill="rgba(0,0,0,.16)"/>
+      <path d="M46 50 L55 45" stroke="#3d2511" stroke-width="7" stroke-linecap="round"/>
+      <path d="M46 50 L55 45" stroke="${M}" stroke-width="4.4" stroke-linecap="round"/>
+      <circle cx="30" cy="43" r="17" fill="url(#pdF)" ${O}/>
+      <ellipse cx="30" cy="45" rx="9" ry="10" fill="${L}"/>
+      <ellipse cx="13" cy="56" rx="7.5" ry="4.6" fill="${M}" ${O}/><ellipse cx="47" cy="56" rx="7.5" ry="4.6" fill="${M}" ${O}/>
+      <rect x="22.5" y="41" width="7" height="17" rx="3.5" fill="${M}" ${O}/><rect x="30.5" y="41" width="7" height="17" rx="3.5" fill="${M}" ${O}/>
+      <ellipse cx="26" cy="57.5" rx="4.6" ry="3" fill="${M}" ${O}/><ellipse cx="34" cy="57.5" rx="4.6" ry="3" fill="${M}" ${O}/>
+      <ellipse cx="13" cy="17" rx="6" ry="12" fill="${D}" ${O} transform="rotate(12 13 17)"/>
+      <ellipse cx="47" cy="17" rx="6" ry="12" fill="${D}" ${O} transform="rotate(-12 47 17)"/>
+      <circle cx="30" cy="15" r="15" fill="url(#pdF)" ${O}/>
       <ellipse cx="30" cy="21" rx="8" ry="6.3" fill="${L}"/>
       <circle cx="24" cy="13" r="2.9" fill="#1d1510"/><circle cx="36" cy="13" r="2.9" fill="#1d1510"/>
       <circle cx="23" cy="12" r="1.05" fill="#fff"/><circle cx="35" cy="12" r="1.05" fill="#fff"/>
-      <path d="M26.6 17.6 q3.4 -2.2 6.8 0 q-.4 3.4 -3.4 3.6 q-3 -.2 -3.4 -3.6 Z" fill="#1d1510"/>
-      <ellipse cx="29" cy="18" rx="1.4" ry=".7" fill="#fff" opacity=".55"/>
-      <path d="M30 21.2 v2 M26.5 24 q3.5 2.8 7 0" fill="none" stroke="#6b4a2a" stroke-width="1.2" stroke-linecap="round"/>
-      <path d="M50 9 q4 -6 8 -4" fill="none" stroke="#8a6238" stroke-width=".9"/>
-      <g transform="rotate(18 58 5)"><rect x="54" y="3" width="10" height="13" rx="1.6" fill="#fff" stroke="#b9a58a" stroke-width=".8"/>
-        <circle cx="59" cy="5.4" r=".9" fill="#b9a58a"/><path d="M59 13 l-2.4 -2.5 a1.5 1.5 0 0 1 2.4 -1.6 a1.5 1.5 0 0 1 2.4 1.6 Z" fill="#E8504A"/></g>
+      <ellipse cx="30" cy="18.6" rx="3.3" ry="2.4" fill="#1d1510"/>
+      <path d="M30 21 v2 M26.5 23.8 q3.5 2.8 7 0" fill="none" stroke="#3d2511" stroke-width="1.2" stroke-linecap="round"/>
     </svg>`;
   }
   const C = { teddy:['#C98B52','#F1D3A6'], bunny:['#F4A9C4','#FFE3EE'], elephant:['#9DB7D6','#DCE8F5'], cat:['#B79BE0','#EADFFB'], dog:['#E2B36B','#FFF1D6'] }[kind];
@@ -3693,20 +3679,24 @@ function plushSVG(kind){
   </svg>`;
 }
 function blueBallSVG(){
-  // a shiny rubber ball like the ones in the pet shop: shaded, grooved, with a paw print
+  // a light blue ball covered in patterns: zigzag band, spots and stars
+  const star = (x,y,r) => { let d=''; for(let i=0;i<10;i++){ const a=Math.PI*i/5 - Math.PI/2, q=i%2?r*.45:r;
+    d += (i?'L':'M') + (x+q*Math.cos(a)).toFixed(1) + ' ' + (y+q*Math.sin(a)).toFixed(1); } return `<path d="${d}Z" fill="#FFD84A" stroke="#D9A514" stroke-width=".7"/>`; };
   return `<svg viewBox="0 0 60 60" width="50" height="50">
     <defs><radialGradient id="bbG" cx="36%" cy="30%" r="75%">
-      <stop offset="0" stop-color="#E4F6FF"/><stop offset=".35" stop-color="#93D6FF"/>
-      <stop offset=".8" stop-color="#4FA9E8"/><stop offset="1" stop-color="#2F86C9"/></radialGradient></defs>
+      <stop offset="0" stop-color="#D8F1FF"/><stop offset=".5" stop-color="#8FD3FF"/><stop offset="1" stop-color="#55ACE8"/></radialGradient>
+      <clipPath id="bbC"><circle cx="30" cy="29" r="26"/></clipPath></defs>
     <ellipse cx="31" cy="56" rx="19" ry="3.2" fill="rgba(0,0,0,.18)"/>
-    <circle cx="30" cy="29" r="26" fill="url(#bbG)" stroke="#2C7CBC" stroke-width="1.6"/>
-    <path d="M5.5 22 Q30 34 54.5 22" fill="none" stroke="#2F86C9" stroke-width="2.2" opacity=".7"/>
-    <path d="M5.5 23.6 Q30 35.6 54.5 23.6" fill="none" stroke="#fff" stroke-width="1" opacity=".6"/>
-    <path d="M7 40 Q30 50 53 40" fill="none" stroke="#2F86C9" stroke-width="2.2" opacity=".7"/>
-    <g fill="#fff" opacity=".92"><ellipse cx="30" cy="34" rx="5.2" ry="4.4"/>
-      <circle cx="23" cy="28.5" r="2.3"/><circle cx="27.6" cy="25.6" r="2.4"/><circle cx="32.8" cy="25.6" r="2.4"/><circle cx="37.2" cy="28.5" r="2.3"/></g>
-    <ellipse cx="20" cy="14" rx="8" ry="4.6" fill="#fff" opacity=".8" transform="rotate(-28 20 14)"/>
-    <circle cx="13" cy="23" r="1.6" fill="#fff" opacity=".7"/>
+    <circle cx="30" cy="29" r="26" fill="url(#bbG)"/>
+    <g clip-path="url(#bbC)">
+      <path d="M2 31 l7 -8 l7 8 l7 -8 l7 8 l7 -8 l7 8 l7 -8 l7 8" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M2 31 l7 -8 l7 8 l7 -8 l7 8 l7 -8 l7 8 l7 -8 l7 8" fill="none" stroke="#2F7FD0" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+      ${star(19,12,5)}${star(40,13,5)}${star(30,45,5.5)}
+      <circle cx="12" cy="41" r="3.2" fill="#FF7A8A"/><circle cx="48" cy="41" r="3.2" fill="#FF7A8A"/>
+      <circle cx="30" cy="8" r="2.4" fill="#fff"/><circle cx="18" cy="50" r="2.2" fill="#fff"/><circle cx="43" cy="50" r="2.2" fill="#fff"/>
+    </g>
+    <circle cx="30" cy="29" r="26" fill="none" stroke="#2C7CBC" stroke-width="1.8"/>
+    <ellipse cx="19" cy="17" rx="6" ry="3" fill="#fff" opacity=".55" transform="rotate(-28 19 17)"/>
   </svg>`;
 }
 function startToys(){
@@ -3721,10 +3711,12 @@ function startToys(){
   const rTag = mk('dogTag rosieTag'); rTag.textContent = 'Rosie';
   const spot = mk('catchSpot');
   const legend = mk('toyLegend',
-    '<div class="lg" data-k="ball">' + blueBallSVG().replace('width="50" height="50"','width="46" height="46"') + ' <small>➜ Rosie</small></div><div class="lg" data-k="soft">' + plushSVG('dog').replace('width="56" height="56"','width="52" height="52"') + ' <small>➜ Missy</small></div>');
+    '<div class="lg" data-k="ball">' + blueBallSVG().replace('width="50" height="50"','width="28" height="28"') + ' <small>➜ Rosie</small></div><div class="lg" data-k="soft">' + plushSVG('dog').replace('width="56" height="56"','width="32" height="32"') + ' <small>➜ Missy</small></div>');
   const basket = mk('toyBasket', '🧺<div class="tapHint">👆</div>');
   basket.style.left = (TOY.spotX - 60) + 'px'; basket.style.top = TOY.basketY + 'px';
   basket.addEventListener('click', pickToy);
+  missy.style.cursor = 'pointer';
+  missy.addEventListener('pointerdown', ()=>throwToy('missy'));
   const toy = mk('theToy'); toy.style.opacity = 0;
   toyState = {
     phase:'pick', round:1, right:0, misses:0, lastKinds:[], lastEmoji:'', taught:{ball:false, soft:false},
@@ -3796,12 +3788,14 @@ function toyDogInZone(){
   if(rIn && mIn) return dr <= dm ? 'rosie' : 'missy';
   return rIn ? 'rosie' : mIn ? 'missy' : null;
 }
-function throwToy(){
+function throwToy(pick){
+  // the Throw button sends it to whoever is on the ring; tapping a dog chooses that dog
   const ts = toyState;
   if(!ts || ts.phase !== 'aim') return;
+  if(typeof pick !== 'string') pick = null;
   ts.phase = 'throw';
   const btn = document.getElementById('throwBtn'); if(btn) btn.disabled = true;
-  ts.catcher = toyDogInZone();
+  ts.catcher = pick ? (Math.abs(ts.dogs[pick].x - TOY.spotX) <= ts.zone ? pick : null) : toyDogInZone();
   const t = ts.toy;
   t.toX = ts.catcher ? ts.dogs[ts.catcher].x : TOY.spotX;
   t.flying = true; t.ft = 0; t.fromX = t.x; t.fromY = t.y;   // lands half a second later
@@ -3963,6 +3957,7 @@ document.getElementById('menuPark').addEventListener('click', ()=>{ hideOverlay(
 document.getElementById('menuVet').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startVet(); });
 document.getElementById('menuKitchen').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startKitchen(); });
 document.getElementById('menuBall').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startBall(); });
+rosie.addEventListener('pointerdown', ()=>{ if(toyState) throwToy('rosie'); });
 document.getElementById('menuToys').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startToys(); });
 
 /* ---------- Grown-ups ---------- */
