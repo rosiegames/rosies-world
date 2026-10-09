@@ -3626,18 +3626,19 @@ function ballWin(){
 /* ================= Toy Basket: balls to Rosie, soft toys to Missy ================= */
 let toyState = null;
 const TOY = { groundY:392, spotX:400, rounds:10, basketY:402,
-  balls:['🎾','⚽','🏀','🏐'], softs:['teddy','bunny','elephant','cat'] };
+  balls:['blue','🎾','⚽','🏀'], softs:['dog','teddy','bunny','elephant','cat'] };
 // stuffed toys, drawn so they read as plush: chunky limbs, button eyes, stitches and a sewn-on patch
 function plushSVG(kind){
-  const C = { teddy:['#C98B52','#F1D3A6'], bunny:['#F4A9C4','#FFE3EE'], elephant:['#9DB7D6','#DCE8F5'], cat:['#B79BE0','#EADFFB'] }[kind];
+  const C = { teddy:['#C98B52','#F1D3A6'], bunny:['#F4A9C4','#FFE3EE'], elephant:['#9DB7D6','#DCE8F5'], cat:['#B79BE0','#EADFFB'], dog:['#E2B36B','#FFF1D6'] }[kind];
   const M = C[0], L = C[1], S = 'stroke="#5a4632" stroke-width="1.6"';
   let ears = '', extra = '';
   if(kind === 'teddy') ears = `<circle cx="17" cy="9" r="7" fill="${M}" ${S}/><circle cx="43" cy="9" r="7" fill="${M}" ${S}/><circle cx="17" cy="9" r="3.2" fill="${L}"/><circle cx="43" cy="9" r="3.2" fill="${L}"/>`;
   if(kind === 'bunny') ears = `<ellipse cx="22" cy="5" rx="5" ry="12" fill="${M}" ${S} transform="rotate(-10 22 5)"/><ellipse cx="38" cy="5" rx="5" ry="12" fill="${M}" ${S} transform="rotate(10 38 5)"/><ellipse cx="22" cy="6" rx="2" ry="8" fill="${L}" transform="rotate(-10 22 6)"/><ellipse cx="38" cy="6" rx="2" ry="8" fill="${L}" transform="rotate(10 38 6)"/>`;
   if(kind === 'elephant'){ ears = `<ellipse cx="12" cy="19" rx="9" ry="11" fill="${M}" ${S}/><ellipse cx="48" cy="19" rx="9" ry="11" fill="${M}" ${S}/><ellipse cx="12" cy="19" rx="5" ry="7" fill="${L}"/><ellipse cx="48" cy="19" rx="5" ry="7" fill="${L}"/>`;
     extra = `<path d="M30 23 q0 11 6 10" fill="none" stroke="#5a4632" stroke-width="8.2" stroke-linecap="round"/><path d="M30 23 q0 11 6 10" fill="none" stroke="${M}" stroke-width="5.4" stroke-linecap="round"/>`; }
+  if(kind === 'dog') ears = `<ellipse cx="14" cy="21" rx="6" ry="12" fill="#A9743A" ${S} transform="rotate(14 14 21)"/><ellipse cx="46" cy="21" rx="6" ry="12" fill="#A9743A" ${S} transform="rotate(-14 46 21)"/>`;
   if(kind === 'cat') ears = `<path d="M17 14 L16 1 L27 9 Z" fill="${M}" ${S} stroke-linejoin="round"/><path d="M43 14 L44 1 L33 9 Z" fill="${M}" ${S} stroke-linejoin="round"/>`;
-  const face = kind === 'elephant' ? '' :
+  const face = kind === 'elephant' ? '' : kind === 'dog' ? `<ellipse cx="30" cy="26" rx="7" ry="5.5" fill="${L}"/>` :
     `<ellipse cx="30" cy="25" rx="6" ry="4.5" fill="${L}"/><path d="M28 23.5 l4 3 M32 23.5 l-4 3" stroke="#5a4632" stroke-width="1.5" stroke-linecap="round"/>`;
   return `<svg viewBox="0 -8 60 70" width="56" height="56" style="overflow:visible">
     <circle cx="14" cy="38" r="6.5" fill="${M}" ${S}/><circle cx="46" cy="38" r="6.5" fill="${M}" ${S}/>
@@ -3651,6 +3652,15 @@ function plushSVG(kind){
     <circle cx="24" cy="18" r="2.6" fill="#2b2118"/><circle cx="36" cy="18" r="2.6" fill="#2b2118"/>
     <circle cx="23.3" cy="17.3" r=".8" fill="#fff"/><circle cx="35.3" cy="17.3" r=".8" fill="#fff"/>
     ${face}${extra}
+    ${kind === 'dog' ? '<ellipse cx="30" cy="23.5" rx="3" ry="2.2" fill="#2b2118"/><ellipse cx="30" cy="30" rx="2.4" ry="3" fill="#f2889b"/>' : ''}
+  </svg>`;
+}
+function blueBallSVG(){
+  return `<svg viewBox="0 0 60 60" width="50" height="50">
+    <circle cx="30" cy="30" r="26" fill="#3B8DE8" stroke="#1F5FB0" stroke-width="2.5"/>
+    <path d="M6 24 Q30 38 54 24" fill="none" stroke="#BFE0FF" stroke-width="4" stroke-linecap="round"/>
+    <path d="M9 40 Q30 52 51 40" fill="none" stroke="#2A72CC" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="21" cy="16" rx="7" ry="4.5" fill="#fff" opacity=".7" transform="rotate(-25 21 16)"/>
   </svg>`;
 }
 function startToys(){
@@ -3665,7 +3675,7 @@ function startToys(){
   const rTag = mk('dogTag rosieTag'); rTag.textContent = 'Rosie';
   const spot = mk('catchSpot');
   const legend = mk('toyLegend',
-    '<div class="lg" data-k="ball">🎾 <small>➜ Rosie</small></div><div class="lg" data-k="soft">' + plushSVG('teddy').replace('width="56" height="56"','width="36" height="36"') + ' <small>➜ Missy</small></div>');
+    '<div class="lg" data-k="ball">' + blueBallSVG().replace('width="50" height="50"','width="32" height="32"') + ' <small>➜ Rosie</small></div><div class="lg" data-k="soft">' + plushSVG('dog').replace('width="56" height="56"','width="36" height="36"') + ' <small>➜ Missy</small></div>');
   const basket = mk('toyBasket', '🧺<div class="tapHint">👆</div>');
   basket.style.left = (TOY.spotX - 60) + 'px'; basket.style.top = TOY.basketY + 'px';
   basket.addEventListener('click', pickToy);
@@ -3715,7 +3725,7 @@ function pickToy(){
   let emoji; do { emoji = pool[Math.floor(Math.random()*pool.length)]; } while(emoji === ts.lastEmoji);
   ts.lastEmoji = emoji; ts.kind = kind;
   const t = ts.toy;
-  if(kind === 'soft') t.el.innerHTML = plushSVG(emoji); else t.el.textContent = emoji;
+  if(kind === 'soft') t.el.innerHTML = plushSVG(emoji); else if(emoji === 'blue') t.el.innerHTML = blueBallSVG(); else t.el.textContent = emoji;
   t.el.style.opacity = 1;
   t.x = TOY.spotX; t.y = TOY.basketY - 14; t.flying = false;
   t.el.style.left = (t.x - 28) + 'px'; t.el.style.top = (t.y - 28) + 'px';
