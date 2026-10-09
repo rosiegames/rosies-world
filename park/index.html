@@ -683,6 +683,29 @@
   #rosie.bmini svg { width:100%; height:100%; }
   #rosie.bmini .mascot { display:none; }
 
+  /* ---------- Toy Basket: balls for Rosie, soft toys for Missy ---------- */
+  #rosie.bmini.face-left svg { transform:scaleX(-1); }
+  .toyBasket { position:absolute; width:120px; height:72px; z-index:14; cursor:pointer;
+    display:flex; align-items:flex-end; justify-content:center; font-size:66px; line-height:1;
+    filter:drop-shadow(0 6px 5px rgba(0,0,0,.22)); -webkit-tap-highlight-color:transparent; }
+  .toyBasket.ready { animation: basketWiggle .9s ease-in-out infinite; }
+  @keyframes basketWiggle { 0%,100%{ transform:rotate(-5deg) scale(1);} 50%{ transform:rotate(5deg) scale(1.08);} }
+  .toyBasket .tapHint { position:absolute; top:-30px; left:50%; transform:translateX(-50%); font-size:30px;
+    animation: hintBob .8s ease-in-out infinite; display:none; }
+  .toyBasket.ready .tapHint { display:block; }
+  @keyframes hintBob { 0%,100%{ margin-top:0;} 50%{ margin-top:8px;} }
+  .theToy { position:absolute; width:56px; height:56px; z-index:15; font-size:50px; line-height:56px;
+    text-align:center; transition:opacity .3s; pointer-events:none; }
+  .catchSpot { position:absolute; height:30px; border-radius:50%; z-index:2;
+    background:rgba(255,255,255,.30); box-shadow: inset 0 0 0 5px rgba(255,255,255,.75); }
+  .catchSpot.lit { background:rgba(255,236,120,.55); box-shadow: inset 0 0 0 5px #ffd44d; }
+  .toyLegend { position:absolute; left:50%; top:96px; transform:translateX(-50%); z-index:16;
+    display:flex; gap:14px; }
+  .toyLegend .lg { background:#fff; border-radius:18px; padding:6px 16px; font-size:30px; font-weight:800;
+    color:#4a3a28; box-shadow:0 3px 0 rgba(0,0,0,.14); display:flex; align-items:center; gap:8px; white-space:nowrap; }
+  .toyLegend .lg small { font-size:19px; }
+  .toyLegend .lg.on { background:#fff1bd; box-shadow:0 0 0 4px #ffd44d, 0 3px 0 rgba(0,0,0,.14); }
+
   /* ---------- Overlays (shop / grown-ups / win) ---------- */
   .overlay {
     position:fixed; inset:0; background:rgba(40,60,80,.45); z-index:100;
@@ -965,6 +988,7 @@
       <button class="choice c-pink" id="menuVet"><span class="big">🩺</span>Vet visit</button>
       <button class="choice c-yellow" id="menuKitchen"><span class="big">🍼</span>Baby Snack Time</button>
       <button class="choice c-purple" id="menuBall"><span class="big">🎾</span>Missy Visit</button>
+      <button class="choice c-red" id="menuToys"><span class="big">🧺</span>Toy Basket</button>
     </div>
   </div>
 </div>
@@ -974,7 +998,7 @@
 
 /* ================= State & storage ================= */
 const SAVE_KEY = 'rosieBath.v1';
-const DEFAULTS = { baths:0, parks:0, vets:0, kitchen:0, ball:0 };
+const DEFAULTS = { baths:0, parks:0, vets:0, kitchen:0, ball:0, toys:0 };
 let S = load();
 
 function load(){
@@ -1256,6 +1280,19 @@ const LINES = [
   "Great throwing! Rosie had so much fun with Missy!",
   "Good throwing! Missy was quick today. Let's play again!",
   "Missy was quick today! Both dogs had fun. Let's play again!",
+  "Tap the basket to get a toy!",
+  "A ball! Balls go to Rosie. Wait for Rosie, then throw!",
+  "A soft toy! Soft toys go to Missy. Wait for Missy, then throw!",
+  "A ball!",
+  "A soft toy!",
+  "Rosie got her ball! Great throw!",
+  "Missy got her soft toy! Great throw!",
+  "Oops! Balls are for Rosie. Have another go.",
+  "Oops! Soft toys are for Missy. Have another go.",
+  "Nobody was there! Wait for the dog, then throw.",
+  "Amazing! Every toy went to the right dog!",
+  "Great throwing! Rosie and Missy love their toys!",
+  "Good try! The dogs were quick today. Let's play again!",
 ];
 let voiceAudio = null;
 function playClip(dataUri){
@@ -1402,6 +1439,7 @@ function resetScene(){
   world.classList.remove('ball-mode');
   document.body.classList.remove('yardbg');
   ballState = null;
+  toyState = null;
   document.body.classList.remove('kitchenbg');
   if(kitState){ kitState.active = false; kitState = null; }
   document.body.classList.remove('lawn');
@@ -3585,6 +3623,231 @@ function ballWin(){
   setTimeout(()=>showWin('🎾🐶', title, sub, '🎾','Play again!'), 1600);
 }
 
+/* ================= Toy Basket: balls to Rosie, soft toys to Missy ================= */
+let toyState = null;
+const TOY = { groundY:392, spotX:400, rounds:10, basketY:402,
+  balls:['🎾','⚽','🏀','🏐'], softs:['🧸','🐰','🐘','🦄'] };
+function startToys(){
+  lastMode = 'toys';
+  resetScene();
+  world.classList.add('ball-mode');
+  document.body.classList.add('yardbg');
+  const scene = document.getElementById('ballScene');
+  const mk = (cls, html) => { const d = document.createElement('div'); d.className = cls + ' ballItem';
+    d.innerHTML = html || ''; scene.appendChild(d); return d; };
+  const missy = mk('missyDog', missySVG() + '<div class="dogTag">Missy</div>');
+  const rTag = mk('dogTag rosieTag'); rTag.textContent = 'Rosie';
+  const spot = mk('catchSpot');
+  const legend = mk('toyLegend',
+    '<div class="lg" data-k="ball">🎾 <small>➜ Rosie</small></div><div class="lg" data-k="soft">🧸 <small>➜ Missy</small></div>');
+  const basket = mk('toyBasket', '🧺<div class="tapHint">👆</div>');
+  basket.style.left = (TOY.spotX - 60) + 'px'; basket.style.top = TOY.basketY + 'px';
+  basket.addEventListener('click', pickToy);
+  const toy = mk('theToy'); toy.style.opacity = 0;
+  toyState = {
+    phase:'pick', round:1, right:0, misses:0, lastKinds:[], lastEmoji:'', taught:{ball:false, soft:false},
+    speed:150, zone:85, kind:null,
+    dogs:{
+      rosie:{ x:150, target:650, side:1, wait:0, mult:1.0 },
+      missy:{ x:680, target:120, side:-1, wait:0.6, mult:0.82 },
+    },
+    toy:{ el:toy, x:TOY.spotX, y:TOY.basketY, vx:0, vy:0, flying:false, toX:0 },
+    missy, rTag, spot, legend, basket, catcher:null, t:0,
+  };
+  rosie.classList.add('bmini');
+  basket.classList.add('ready');
+  layoutToys();
+  clearChoices();
+  const b = document.createElement('button');
+  b.className = 'throwBtn'; b.id = 'throwBtn'; b.disabled = true;
+  b.innerHTML = '<span class="big">🤾</span>Throw!';
+  b.addEventListener('click', throwToy);
+  choiceRow.appendChild(b);
+  instruct("Tap the basket to get a toy!");
+}
+function layoutToys(){
+  const ts = toyState, d = ts.dogs;
+  rosie.style.left = (d.rosie.x - BALL.rosieW/2) + 'px';
+  rosie.style.top = (TOY.groundY - 108) + 'px';
+  ts.missy.style.left = (d.missy.x - BALL.missyW/2) + 'px';
+  ts.missy.style.top = (TOY.groundY - 143) + 'px';
+  ts.rTag.style.left = d.rosie.x + 'px';
+  ts.rTag.style.top = (TOY.groundY - 132) + 'px';
+  ts.spot.style.left = (TOY.spotX - ts.zone) + 'px';
+  ts.spot.style.width = (ts.zone*2) + 'px';
+  ts.spot.style.top = (TOY.groundY - 18) + 'px';
+}
+function pickToy(){
+  const ts = toyState;
+  if(!ts || ts.phase !== 'pick') return;
+  // random, but never three of the same kind running, and never the same toy twice
+  let kind = Math.random() < .5 ? 'ball' : 'soft';
+  const lk = ts.lastKinds;
+  if(lk.length >= 2 && lk[lk.length-1] === kind && lk[lk.length-2] === kind) kind = kind === 'ball' ? 'soft' : 'ball';
+  lk.push(kind);
+  const pool = kind === 'ball' ? TOY.balls : TOY.softs;
+  let emoji; do { emoji = pool[Math.floor(Math.random()*pool.length)]; } while(emoji === ts.lastEmoji);
+  ts.lastEmoji = emoji; ts.kind = kind;
+  const t = ts.toy;
+  t.el.textContent = emoji; t.el.style.opacity = 1;
+  t.x = TOY.spotX; t.y = TOY.basketY - 14; t.flying = false;
+  t.el.style.left = (t.x - 28) + 'px'; t.el.style.top = (t.y - 28) + 'px';
+  ts.basket.classList.remove('ready');
+  ts.legend.querySelectorAll('.lg').forEach(l => l.classList.toggle('on', l.dataset.k === kind));
+  sfx.pop();
+  ts.phase = 'aim';
+  const btn = document.getElementById('throwBtn'); if(btn) btn.disabled = false;
+  if(!ts.taught[kind]){
+    ts.taught[kind] = true;
+    instruct(kind === 'ball' ? "A ball! Balls go to Rosie. Wait for Rosie, then throw!"
+                             : "A soft toy! Soft toys go to Missy. Wait for Missy, then throw!");
+  } else {
+    instruct(kind === 'ball' ? "A ball!" : "A soft toy!");
+  }
+}
+function toyDogInZone(){
+  // whoever is standing on the catch spot gets it; if both are, the closer one does
+  const ts = toyState, d = ts.dogs;
+  const dr = Math.abs(d.rosie.x - TOY.spotX), dm = Math.abs(d.missy.x - TOY.spotX);
+  const rIn = dr <= ts.zone, mIn = dm <= ts.zone;
+  if(rIn && mIn) return dr <= dm ? 'rosie' : 'missy';
+  return rIn ? 'rosie' : mIn ? 'missy' : null;
+}
+function throwToy(){
+  const ts = toyState;
+  if(!ts || ts.phase !== 'aim') return;
+  ts.phase = 'throw';
+  const btn = document.getElementById('throwBtn'); if(btn) btn.disabled = true;
+  ts.catcher = toyDogInZone();
+  const t = ts.toy;
+  t.toX = ts.catcher ? ts.dogs[ts.catcher].x : TOY.spotX;
+  t.flying = true; t.ft = 0; t.fromX = t.x; t.fromY = t.y;   // lands half a second later
+  sfx.pop(); tone(680, .09, 'sine', .09);
+}
+function toyTick(dt){
+  const ts = toyState, d = ts.dogs;
+  ts.t += dt;
+  // the dogs never stop running from one side of the yard to the other
+  ['rosie','missy'].forEach(name=>{
+    const dog = d[name];
+    if(ts.catcher === name && ts.phase !== 'pick' && ts.phase !== 'aim') return;   // she stops to catch
+    if(dog.wait > 0){ dog.wait -= dt; return; }
+    const step = ts.speed * dog.mult * dt, gap = dog.target - dog.x;
+    if(Math.abs(gap) <= step){
+      dog.x = dog.target;
+      dog.side = -dog.side;
+      dog.target = dog.side > 0 ? 520 + Math.random()*210 : 70 + Math.random()*210;
+      dog.wait = 0.25 + Math.random()*0.9;
+      dog.mult = (name === 'rosie' ? 0.9 : 0.75) + Math.random()*0.35;
+    } else {
+      dog.x += Math.sign(gap) * step;
+      const el = name === 'rosie' ? rosie : ts.missy;
+      el.classList.toggle('face-left', gap < 0);
+    }
+  });
+  if(ts.phase === 'aim') ts.spot.classList.toggle('lit', !!toyDogInZone());
+  else ts.spot.classList.remove('lit');
+  if(ts.phase === 'throw'){
+    const t = ts.toy;
+    t.ft += dt;
+    const k = Math.min(1, t.ft / 0.5), endY = TOY.groundY - 55;
+    t.x = t.fromX + (t.toX - t.fromX) * k;
+    t.y = t.fromY + (endY - t.fromY) * k - 150 * Math.sin(Math.PI * k);
+    t.el.style.left = (t.x - 28) + 'px'; t.el.style.top = (t.y - 28) + 'px';
+    if(k >= 1){ t.flying = false; resolveToy(); }
+  }
+  layoutToys();
+}
+function resolveToy(){
+  const ts = toyState, t = ts.toy;
+  const want = ts.kind === 'ball' ? 'rosie' : 'missy';
+  ts.phase = 'result';
+  if(!ts.catcher){
+    // nobody home: no harm done, the same toy comes straight back
+    sfx.no();
+    toast(TOY.spotX - 90, TOY.groundY - 150, "Nobody was there!");
+    instruct("Nobody was there! Wait for the dog, then throw.");
+    setTimeout(()=>{
+      if(!toyState || toyState !== ts) return;
+      t.x = TOY.spotX; t.y = TOY.basketY - 14;
+      t.el.style.left = (t.x - 28) + 'px'; t.el.style.top = (t.y - 28) + 'px';
+      ts.phase = 'aim';
+      const btn = document.getElementById('throwBtn'); if(btn) btn.disabled = false;
+    }, 1500);
+    toyEase();
+    return;
+  }
+  const el = ts.catcher === 'rosie' ? rosie : ts.missy;
+  const cx = ts.dogs[ts.catcher].x;
+  t.el.style.opacity = 0;
+  el.classList.add('happy');
+  if(ts.catcher === want){
+    ts.right++; ts.misses = 0;
+    sfx.yay();
+    floatEmoji(cx, TOY.groundY - 135, '💛');
+    toast(cx - 60, TOY.groundY - 195, want === 'rosie' ? "Rosie got it!" : "Missy got it!");
+    say(want === 'rosie' ? "Rosie got her ball! Great throw!" : "Missy got her soft toy! Great throw!");
+    instrText.textContent = "Yes! " + ts.right + " of " + ts.round;
+  } else {
+    sfx.no();
+    floatEmoji(cx, TOY.groundY - 135, '🙈');
+    toast(cx - 70, TOY.groundY - 195, "Wrong dog!");
+    instruct(ts.kind === 'ball' ? "Oops! Balls are for Rosie. Have another go."
+                                : "Oops! Soft toys are for Missy. Have another go.");
+    toyEase();
+  }
+  if(ts.round >= TOY.rounds){ setTimeout(toysWin, 1900); return; }
+  setTimeout(nextToy, 2000);
+}
+function toyEase(){
+  // two slips in a row: slow the dogs down and give a bigger catch spot
+  const ts = toyState;
+  ts.misses++;
+  if(ts.misses >= 2){
+    ts.speed = Math.max(110, ts.speed - 34);
+    ts.zone = Math.min(125, ts.zone + 14);
+    ts.misses = 0;
+  }
+}
+function nextToy(){
+  const ts = toyState;
+  if(!ts) return;
+  ts.round++;
+  ts.speed = Math.min(270, ts.speed + 17);       // the dogs get quicker every toy
+  rosie.classList.remove('happy'); ts.missy.classList.remove('happy');
+  ts.catcher = null; ts.kind = null;
+  ts.legend.querySelectorAll('.lg').forEach(l => l.classList.remove('on'));
+  ts.basket.classList.add('ready');
+  ts.phase = 'pick';
+  instruct("Tap the basket to get a toy!", ts.round <= 2);
+}
+function toysWin(){
+  const ts = toyState;
+  if(!ts) return;
+  ts.phase = 'done';
+  rosie.classList.add('sparkly','happy'); ts.missy.classList.add('happy');
+  S.toys = (S.toys || 0) + 1; save();
+  confettiBurst(); sfx.yay(); clearChoices();
+  const n = ts.right;
+  let title, sub, line;
+  if(n === TOY.rounds){
+    title = "Every toy to the right dog!";
+    sub = TOY.rounds + " out of " + TOY.rounds + ". Amazing throwing!";
+    line = "Amazing! Every toy went to the right dog!";
+  } else if(n >= TOY.rounds/2){
+    title = n + " of " + TOY.rounds + " toys!";
+    sub = "Rosie and Missy love their toys.";
+    line = "Great throwing! Rosie and Missy love their toys!";
+  } else {
+    title = "The dogs were quick today!";
+    sub = "They had a great time. Have another go!";
+    line = "Good try! The dogs were quick today. Let's play again!";
+  }
+  instrText.textContent = title;
+  say(line);
+  setTimeout(()=>showWin('🧺🐶', title, sub, '🧺','Play again!'), 1600);
+}
+
 /* ================= Overlays ================= */
 function showOverlay(id){ document.getElementById(id).classList.add('show'); }
 function hideOverlay(id){ document.getElementById(id).classList.remove('show'); }
@@ -3596,7 +3859,7 @@ document.getElementById('winAgain').addEventListener('click', ()=>{
   hideOverlay('winOverlay');
   if(lastMode === 'park') startPark(); else if(lastMode === 'vet') startVet();
   else if(lastMode === 'kitchen') startKitchen();
-  else if(lastMode === 'ball') startBall(); else startBath();
+  else if(lastMode === 'ball') startBall(); else if(lastMode === 'toys') startToys(); else startBath();
 });
 document.getElementById('winMenu').addEventListener('click', ()=>{
   hideOverlay('winOverlay'); showMenu();
@@ -3617,6 +3880,7 @@ document.getElementById('menuPark').addEventListener('click', ()=>{ hideOverlay(
 document.getElementById('menuVet').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startVet(); });
 document.getElementById('menuKitchen').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startKitchen(); });
 document.getElementById('menuBall').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startBall(); });
+document.getElementById('menuToys').addEventListener('click', ()=>{ hideOverlay('menuOverlay'); startToys(); });
 
 /* ---------- Grown-ups ---------- */
 let gateAnswer = 0;
@@ -3642,7 +3906,7 @@ document.getElementById('gateGo').addEventListener('click', ()=>{
   }
 });
 function renderGrown(){
-  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits, ' + (S.kitchen||0) + ' kitchen, ' + (S.ball||0) + ' ball';
+  document.getElementById('bathCount').textContent = S.baths + ' baths, ' + S.parks + ' park visits, ' + (S.vets||0) + ' vet visits, ' + (S.kitchen||0) + ' kitchen, ' + (S.ball||0) + ' ball, ' + (S.toys||0) + ' toy basket';
   renderVoiceList();
 }
 document.getElementById('makeBackup').addEventListener('click', ()=>{
@@ -3685,6 +3949,7 @@ function gameTick(ts){
   if(parkState) parkTick(dt);
   if(kitState) kitTick(dt);
   if(ballState && ballState.phase !== 'done') ballTick(dt);
+  if(toyState && toyState.phase !== 'done') toyTick(dt);
   requestAnimationFrame(gameTick);
 }
 requestAnimationFrame(gameTick);
@@ -3739,6 +4004,7 @@ document.body.addEventListener('pointerdown', function once(){
   else if(want === 'vet') startVet();
   else if(want === 'kitchen') startKitchen();
   else if(want === 'ball') startBall();
+  else if(want === 'toys') startToys();
   else showMenu();
 })();
 </script>
