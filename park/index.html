@@ -3626,7 +3626,33 @@ function ballWin(){
 /* ================= Toy Basket: balls to Rosie, soft toys to Missy ================= */
 let toyState = null;
 const TOY = { groundY:392, spotX:400, rounds:10, basketY:402,
-  balls:['🎾','⚽','🏀','🏐'], softs:['🧸','🐰','🐘','🦄'] };
+  balls:['🎾','⚽','🏀','🏐'], softs:['teddy','bunny','elephant','cat'] };
+// stuffed toys, drawn so they read as plush: chunky limbs, button eyes, stitches and a sewn-on patch
+function plushSVG(kind){
+  const C = { teddy:['#C98B52','#F1D3A6'], bunny:['#F4A9C4','#FFE3EE'], elephant:['#9DB7D6','#DCE8F5'], cat:['#B79BE0','#EADFFB'] }[kind];
+  const M = C[0], L = C[1], S = 'stroke="#5a4632" stroke-width="1.6"';
+  let ears = '', extra = '';
+  if(kind === 'teddy') ears = `<circle cx="17" cy="9" r="7" fill="${M}" ${S}/><circle cx="43" cy="9" r="7" fill="${M}" ${S}/><circle cx="17" cy="9" r="3.2" fill="${L}"/><circle cx="43" cy="9" r="3.2" fill="${L}"/>`;
+  if(kind === 'bunny') ears = `<ellipse cx="22" cy="5" rx="5" ry="12" fill="${M}" ${S} transform="rotate(-10 22 5)"/><ellipse cx="38" cy="5" rx="5" ry="12" fill="${M}" ${S} transform="rotate(10 38 5)"/><ellipse cx="22" cy="6" rx="2" ry="8" fill="${L}" transform="rotate(-10 22 6)"/><ellipse cx="38" cy="6" rx="2" ry="8" fill="${L}" transform="rotate(10 38 6)"/>`;
+  if(kind === 'elephant'){ ears = `<ellipse cx="12" cy="19" rx="9" ry="11" fill="${M}" ${S}/><ellipse cx="48" cy="19" rx="9" ry="11" fill="${M}" ${S}/><ellipse cx="12" cy="19" rx="5" ry="7" fill="${L}"/><ellipse cx="48" cy="19" rx="5" ry="7" fill="${L}"/>`;
+    extra = `<path d="M30 23 q0 11 6 10" fill="none" stroke="#5a4632" stroke-width="8.2" stroke-linecap="round"/><path d="M30 23 q0 11 6 10" fill="none" stroke="${M}" stroke-width="5.4" stroke-linecap="round"/>`; }
+  if(kind === 'cat') ears = `<path d="M17 14 L16 1 L27 9 Z" fill="${M}" ${S} stroke-linejoin="round"/><path d="M43 14 L44 1 L33 9 Z" fill="${M}" ${S} stroke-linejoin="round"/>`;
+  const face = kind === 'elephant' ? '' :
+    `<ellipse cx="30" cy="25" rx="6" ry="4.5" fill="${L}"/><path d="M28 23.5 l4 3 M32 23.5 l-4 3" stroke="#5a4632" stroke-width="1.5" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 -8 60 70" width="56" height="56" style="overflow:visible">
+    <circle cx="14" cy="38" r="6.5" fill="${M}" ${S}/><circle cx="46" cy="38" r="6.5" fill="${M}" ${S}/>
+    <ellipse cx="21" cy="55" rx="7.5" ry="6" fill="${M}" ${S}/><ellipse cx="39" cy="55" rx="7.5" ry="6" fill="${M}" ${S}/>
+    <ellipse cx="30" cy="43" rx="14" ry="13.5" fill="${M}" ${S}/>
+    <ellipse cx="30" cy="45" rx="8.5" ry="8.5" fill="${L}"/>
+    <path d="M30 37 V 54" stroke="#5a4632" stroke-width="1.2" stroke-dasharray="2 2"/>
+    <rect x="34" y="42" width="7" height="7" rx="1.5" fill="#ff8a7a" stroke="#5a4632" stroke-width="1" stroke-dasharray="1.6 1.4"/>
+    ${ears}
+    <circle cx="30" cy="20" r="14" fill="${M}" ${S}/>
+    <circle cx="24" cy="18" r="2.6" fill="#2b2118"/><circle cx="36" cy="18" r="2.6" fill="#2b2118"/>
+    <circle cx="23.3" cy="17.3" r=".8" fill="#fff"/><circle cx="35.3" cy="17.3" r=".8" fill="#fff"/>
+    ${face}${extra}
+  </svg>`;
+}
 function startToys(){
   lastMode = 'toys';
   resetScene();
@@ -3639,7 +3665,7 @@ function startToys(){
   const rTag = mk('dogTag rosieTag'); rTag.textContent = 'Rosie';
   const spot = mk('catchSpot');
   const legend = mk('toyLegend',
-    '<div class="lg" data-k="ball">🎾 <small>➜ Rosie</small></div><div class="lg" data-k="soft">🧸 <small>➜ Missy</small></div>');
+    '<div class="lg" data-k="ball">🎾 <small>➜ Rosie</small></div><div class="lg" data-k="soft">' + plushSVG('teddy').replace('width="56" height="56"','width="36" height="36"') + ' <small>➜ Missy</small></div>');
   const basket = mk('toyBasket', '🧺<div class="tapHint">👆</div>');
   basket.style.left = (TOY.spotX - 60) + 'px'; basket.style.top = TOY.basketY + 'px';
   basket.addEventListener('click', pickToy);
@@ -3689,7 +3715,8 @@ function pickToy(){
   let emoji; do { emoji = pool[Math.floor(Math.random()*pool.length)]; } while(emoji === ts.lastEmoji);
   ts.lastEmoji = emoji; ts.kind = kind;
   const t = ts.toy;
-  t.el.textContent = emoji; t.el.style.opacity = 1;
+  if(kind === 'soft') t.el.innerHTML = plushSVG(emoji); else t.el.textContent = emoji;
+  t.el.style.opacity = 1;
   t.x = TOY.spotX; t.y = TOY.basketY - 14; t.flying = false;
   t.el.style.left = (t.x - 28) + 'px'; t.el.style.top = (t.y - 28) + 'px';
   ts.basket.classList.remove('ready');
